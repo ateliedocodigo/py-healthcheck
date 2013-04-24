@@ -12,7 +12,7 @@ Usage
 
 Here's an example of basic usage
 
-```
+```python
 from flask import Flask
 from healthcheck import HealthCheck
 
@@ -39,7 +39,7 @@ The boolean is whether or not the check passed.  The message is any string or
 output that should be rendered for this check.  Useful for error
 messages/debugging.
 
-```
+```python
 # add check functions
 def addition_works():
 
@@ -52,7 +52,7 @@ def addition_works():
 Any exceptions that get thrown by your code will be caught and handled as
 errors in the healthcheck:
 
-```
+```python
 # add check functions
 def throws_exception():
 	bad_var = None
@@ -62,7 +62,7 @@ def throws_exception():
 
 Will output:
 
-```
+```json
 {
 	"status": "failure",
 		"results": [
