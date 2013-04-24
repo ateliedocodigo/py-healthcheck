@@ -73,12 +73,11 @@ Will output:
 		}
 	]
 }
+```
 
 Note, all checkers will get run and all failures will be reported.  It's
 intended that they are all separate checks and if any one fails the
 healthcheck overall is failed.
-
-```
 
 Customizing
 -----------
