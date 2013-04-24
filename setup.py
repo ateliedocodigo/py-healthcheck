@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='healthcheck',
-      version='0.1.0',
+      version='0.1.1',
       description='Adds healthcheck endpoints to Flask apps',
       author='Frank Stratton',
       author_email='frank@runscope.com',

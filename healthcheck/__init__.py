@@ -1,4 +1,5 @@
 import json
+import sys
 
 def basic_exception_handler(checker, e):
     return False, str(e)
@@ -61,7 +62,8 @@ class HealthCheck(object):
             current_checker = checker
             try:
                 passed, output = checker()
-            except Exception as e:
+            except:
+                e = sys.exc_info()[0]
                 passed, output = self.exception_handler(current_checker, e)
 
             result = {
