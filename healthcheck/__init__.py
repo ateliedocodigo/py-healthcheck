@@ -1,5 +1,6 @@
 import json
 import sys
+import traceback
 
 def basic_exception_handler(checker, e):
     return False, str(e)
@@ -63,6 +64,7 @@ class HealthCheck(object):
             try:
                 passed, output = checker()
             except:
+                traceback.print_exc()
                 e = sys.exc_info()[0]
                 passed, output = self.exception_handler(current_checker, e)
 
