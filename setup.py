@@ -11,6 +11,7 @@ setup(name='healthcheck',
       packages=find_packages(),
       zip_safe=False,
       include_package_data=True,
+      license='MIT',
       platforms='any',
       install_requires=[
       ],
