@@ -66,7 +66,12 @@ class HealthCheck(object):
             except:
                 traceback.print_exc()
                 e = sys.exc_info()[0]
+                self.app.logger.exception(e)
                 passed, output = self.exception_handler(current_checker, e)
+
+            if not passed:
+                msg = 'Health check "{}" failed with output "{}"'.format(checker.func_name, output)
+                self.app.logger.error(msg)
 
             result = {
                 'checker': checker.func_name,
