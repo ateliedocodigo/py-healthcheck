@@ -95,8 +95,8 @@ class HealthCheck(object):
                 
             results.append(result)
 
-        fn = lambda result, passed: passed and (result.get('passed') or result.get('skipped'))
-        passed = reduce(fn, results)
+        fn = lambda passed, result: passed and (result.get('passed') or result.get('skipped'))
+        passed = reduce(fn, results, True)
 
         if passed:
             message = "OK"
