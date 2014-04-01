@@ -31,6 +31,21 @@ def redis_available():
 health.add_check(redis_available)
 ```
 
+To run all of your check functions, make a request to the healthcheck URL
+you specified, like this:
+
+```
+curl "http://localhost:5000/healthcheck"
+```
+
+You can also run a simple health check which will confirm that the Flask
+app is responsive but which won't execute any of the check functions. To
+run the simple check, add `?simple=true` to the URL. For example:
+
+```
+curl "http://localhost:5000/healthcheck?simple=true"
+```
+
 Check Functions
 ---------------
 
