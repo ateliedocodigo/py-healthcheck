@@ -38,14 +38,6 @@ you specified, like this:
 curl "http://localhost:5000/healthcheck"
 ```
 
-You can also run a simple health check which will confirm that the Flask
-app is responsive but which won't execute any of the check functions. To
-run the simple check, add `?simple=true` to the URL. For example:
-
-```
-curl "http://localhost:5000/healthcheck?simple=true"
-```
-
 Check Functions
 ---------------
 
@@ -93,6 +85,22 @@ Will output:
 Note, all checkers will get run and all failures will be reported.  It's
 intended that they are all separate checks and if any one fails the
 healthcheck overall is failed.
+
+Caching
+-------
+
+In Runscope's infrastructure, the /healthcheck endpoint is hit surprisingly
+often. haproxy runs on every server, and each haproxy hits every healthcheck
+twice a minute. (So if we have 30 servers in our infrastructure, that's 60
+healthchecks per minute to every Flask service.) Plus, monit hits every
+healthcheck 6 times a minute. 
+
+To avoid putting too much strain on backend services, health check results can
+be cached in process memory. By default, health checks that succeed are cached
+for 27 seconds, and failures are cached for 9 seconds. These can be overridden
+with the `success_ttl` and `failed_ttl` parameters. If you don't want to use
+the cache at all, initialize the Healthcheck object with `success_ttl=None,
+failed_ttl=None`.
 
 Customizing
 -----------
