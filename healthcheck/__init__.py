@@ -36,8 +36,8 @@ def json_failed_handler(results):
 class HealthCheck(object):
     def __init__(self, app=None, path=None, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
-                 failed_status=500, failed_headers=None,
-                 failed_handler=json_failed_handler,
+                 success_ttl=27, failed_status=500, failed_headers=None,
+                 failed_handler=json_failed_handler, failed_ttl=9,
                  exception_handler=basic_exception_handler, checkers=None,
                  **options):
 
@@ -48,10 +48,12 @@ class HealthCheck(object):
         self.success_status = success_status
         self.success_headers = success_headers or {'Content-Type': 'application/json'}
         self.success_handler = success_handler
+        self.success_ttl = float(success_ttl or 0)
 
         self.failed_status = failed_status
         self.failed_headers = failed_headers or {'Content-Type': 'application/json'}
         self.failed_handler = failed_handler
+        self.failed_ttl = float(failed_ttl or 0)
 
         self.exception_handler = exception_handler
 
@@ -105,9 +107,9 @@ class HealthCheck(object):
 
         timestamp = time.time() 
         if passed:
-            expires = timestamp + 27.0
+            expires = timestamp + self.success_ttl
         else:
-            expires = timestamp + 9.0
+            expires = timestamp + self.failed_ttl
 
         result = {'checker': checker.func_name,
                   'output': output,

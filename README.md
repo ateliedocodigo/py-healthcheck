@@ -95,9 +95,12 @@ twice a minute. (So if we have 30 servers in our infrastructure, that's 60
 healthchecks per minute to every Flask service.) Plus, monit hits every
 healthcheck 6 times a minute. 
 
-To avoid putting too much strain on our backend services, we cache health check
-results in process memory. Health checks that succeed are cached for 27
-seconds. Failures are cached for 9 seconds.
+To avoid putting too much strain on backend services, health check results can
+be cached in process memory. By default, health checks that succeed are cached
+for 27 seconds, and failures are cached for 9 seconds. These can be overridden
+with the `success_ttl` and `failed_ttl` parameters. If you don't want to use
+the cache at all, initialize the Healthcheck object with `success_ttl=None,
+failed_ttl=None`.
 
 Customizing
 -----------
