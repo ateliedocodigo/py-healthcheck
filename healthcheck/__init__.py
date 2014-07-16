@@ -1,6 +1,7 @@
 import json
 import socket
 import sys
+import time
 import traceback
 
 from flask import request
@@ -14,6 +15,7 @@ def json_success_handler(results):
     data = {
         'hostname': socket.gethostname(),
         'status': 'success',
+        'timestamp': time.time(),
         'results': results,
     }
 
@@ -24,6 +26,7 @@ def json_failed_handler(results):
     data = {
         'hostname': socket.gethostname(),
         'status': 'failure',
+        'timestamp': time.time(),
         'results': results,
     }
 
@@ -40,14 +43,13 @@ class HealthCheck(object):
 
         self.app = app
         self.path = path
+        self.cache = dict()
 
         self.success_status = success_status
-        # XXX this default should be somewhere else, maybe returned by the handler
         self.success_headers = success_headers or {'Content-Type': 'application/json'}
         self.success_handler = success_handler
 
         self.failed_status = failed_status
-        # XXX this default should be somewhere else, maybe returned by the handler
         self.failed_headers = failed_headers or {'Content-Type': 'application/json'}
         self.failed_handler = failed_handler
 
@@ -63,39 +65,16 @@ class HealthCheck(object):
         self.checkers.append(func)
 
     def check(self):
-        skip_checks = request.args.get('simple', 'false') == 'true'
-    
         results = []
-        current_checker = None
         for checker in self.checkers:
-            current_checker = checker
-            if skip_checks:
-                result = {
-                    'checker': checker.func_name,
-                    'skipped': True
-                }
+            if checker in self.cache and self.cache[checker].get('expires') >= time.time():
+                result = self.cache[checker]
             else:
-                try:
-                    passed, output = checker()
-                except:
-                    traceback.print_exc()
-                    e = sys.exc_info()[0]
-                    self.app.logger.exception(e)
-                    passed, output = self.exception_handler(current_checker, e)
-
-                if not passed:
-                    msg = 'Health check "{}" failed with output "{}"'.format(checker.func_name, output)
-                    self.app.logger.error(msg)
-
-                result = {
-                    'checker': checker.func_name,
-                    'output': output,
-                    'passed': passed
-                }
-                
+                result = self.run_check(checker)
+                self.cache[checker] = result
             results.append(result)
 
-        fn = lambda passed, result: passed and (result.get('passed') or result.get('skipped'))
+        fn = lambda passed, result: passed and result.get('passed')
         passed = reduce(fn, results, True)
 
         if passed:
@@ -110,3 +89,29 @@ class HealthCheck(object):
                 message = self.failed_handler(results)
 
             return message, self.failed_status, self.failed_headers
+
+    def run_check(self, checker):
+        try:
+            passed, output = checker()
+        except:
+            traceback.print_exc()
+            e = sys.exc_info()[0]
+            self.app.logger.exception(e)
+            passed, output = self.exception_handler(checker, e)
+
+        if not passed:
+            msg = 'Health check "{}" failed with output "{}"'.format(checker.func_name, output)
+            self.app.logger.error(msg)
+
+        timestamp = time.time() 
+        if passed:
+            expires = timestamp + 27.0
+        else:
+            expires = timestamp + 9.0
+
+        result = {'checker': checker.func_name,
+                  'output': output,
+                  'passed': passed,
+                  'timestamp': timestamp,
+                  'expires': expires}
+        return result
