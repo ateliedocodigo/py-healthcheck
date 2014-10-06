@@ -34,6 +34,7 @@ def json_failed_handler(results):
 
 
 class HealthCheck(object):
+
     def __init__(self, app=None, path=None, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
@@ -105,7 +106,7 @@ class HealthCheck(object):
             msg = 'Health check "{}" failed with output "{}"'.format(checker.func_name, output)
             self.app.logger.error(msg)
 
-        timestamp = time.time() 
+        timestamp = time.time()
         if passed:
             expires = timestamp + self.success_ttl
         else:
