@@ -3,11 +3,12 @@
 from setuptools import setup, find_packages
 
 setup(name='healthcheck',
-      version='0.2',
+      version='0.1.1',
       description='Adds healthcheck endpoints to Flask apps',
       author='Frank Stratton',
       author_email='frank@runscope.com',
-      url='http://runscope.com',
+      url='https://github.com/Runscope/healthcheck',
+      download_url = 'https://github.com/Runccope/healthcheck/tarball/0.1.1',
       packages=find_packages(),
       zip_safe=False,
       include_package_data=True,
@@ -15,4 +16,10 @@ setup(name='healthcheck',
       platforms='any',
       install_requires=[
       ],
+       classifiers=(
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Framework :: Flask',
+        'Programming Language :: Python',
+        ),
       )
