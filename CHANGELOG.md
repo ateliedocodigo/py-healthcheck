@@ -1,5 +1,9 @@
 # Healthcheck Changelog
 
+### 1.1.0
+- Added the `EnvironmentDump` class which provides a second endpoint for
+details about your application's environment.
+
 ### 1.0.0
 - Incremented the version number to indicate that this is a stable release.
 
