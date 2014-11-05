@@ -1,5 +1,8 @@
 # Healthcheck Changelog
 
+### 1.0.0
+- Incremented the version number to indicate that this is a stable release.
+
 ### 0.2
 - Added caching to health check responses. Successful checks are cached for 27
 seconds; failures are cached for 9 seconds.
