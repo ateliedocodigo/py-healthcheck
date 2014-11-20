@@ -1,8 +1,12 @@
+import imp
 import json
+import os
 import socket
+import subprocess
 import sys
 import time
 import traceback
+from types import NoneType
 
 from flask import request
 
@@ -34,7 +38,6 @@ def json_failed_handler(results):
 
 
 class HealthCheck(object):
-
     def __init__(self, app=None, path=None, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
@@ -117,4 +120,82 @@ class HealthCheck(object):
                   'passed': passed,
                   'timestamp': timestamp,
                   'expires': expires}
+        return result
+
+
+class EnvironmentDump(object):
+    def __init__(self, app=None, path=None,
+                 include_os=True, include_python=True,
+                 include_config=True, include_process=True):
+        self.app = app
+        self.path = path
+
+        self.functions = {}
+        if include_os:
+            self.functions['os'] = self.get_os
+        if include_python:
+            self.functions['python'] = self.get_python
+        if include_config:
+            self.functions['config'] = self.get_config
+        if include_process:
+            self.functions['process'] = self.get_process
+
+        if self.app and self.path:
+            app.add_url_rule(self.path, view_func=self.dump_environment)
+
+    def add_section(self, name, func):
+        if name in self.functions:
+            raise Exception('The name "{}" is already taken.'.format(name))
+        self.functions[name] = func
+
+    def dump_environment(self):
+        data = {}
+        for (name, func) in self.functions.iteritems():
+            data[name] = func()
+
+        return json.dumps(data), 200, {'Content-Type': 'application/json'}
+
+    def get_os(self):
+        return {'platform': sys.platform,
+                'name': os.name,
+                'uname': os.uname()}
+
+    def get_config(self):
+        return self.safe_dump(self.app.config)
+
+    def get_python(self):
+        result = {'version': sys.version,
+                  'executable': sys.executable,
+                  'pythonpath': sys.path,
+                  'version_info': {'major': sys.version_info.major,
+                                   'minor': sys.version_info.minor,
+                                   'micro': sys.version_info.micro,
+                                   'releaselevel': sys.version_info.releaselevel,
+                                   'serial': sys.version_info.serial}}
+        if imp.find_module('pip'):
+            import pip
+            packages = dict([(p.project_name, p.version) for p in pip.get_installed_distributions()])
+            result['packages'] = packages
+
+        return result
+
+    def get_process(self):
+        return {'argv': sys.argv,
+                'cwd': os.getcwd(),
+                'user': os.getlogin(),
+                'pid': os.getpid(),
+                'environ': self.safe_dump(os.environ)}
+
+    def safe_dump(self, dictionary):
+        result = {}
+        for key in dictionary.keys():
+            if 'key' in key.lower() or 'token' in key.lower() or 'pass' in key.lower():
+                # Try to avoid listing passwords and access tokens or keys in the output
+                result[key] = "********"
+            else:
+                try:
+                    json.dumps(dictionary[key])
+                    result[key] = dictionary[key]
+                except TypeError:
+                    pass
         return result
