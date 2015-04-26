@@ -162,6 +162,7 @@ disable sections when you instantiate the `EnvironmentDump` object, like this:
 envdump = EnvironmentDump(app, "/environment",
                           include_python=False, include_os=False,
                           include_process=False, include_config=False)
+```
 
 ### Adding custom data sections
 
