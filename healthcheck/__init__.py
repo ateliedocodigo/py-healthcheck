@@ -6,7 +6,16 @@ import subprocess
 import sys
 import time
 import traceback
-from types import NoneType
+
+try:
+    from functools import reduce
+except:
+    pass
+
+try:
+    from types import NoneType
+except:
+    NoneType = type(None)
 
 from flask import request
 
@@ -106,7 +115,7 @@ class HealthCheck(object):
             passed, output = self.exception_handler(checker, e)
 
         if not passed:
-            msg = 'Health check "{}" failed with output "{}"'.format(checker.func_name, output)
+            msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
             self.app.logger.error(msg)
 
         timestamp = time.time()
@@ -115,7 +124,7 @@ class HealthCheck(object):
         else:
             expires = timestamp + self.failed_ttl
 
-        result = {'checker': checker.func_name,
+        result = {'checker': checker.__name__,
                   'output': output,
                   'passed': passed,
                   'timestamp': timestamp,
@@ -199,3 +208,4 @@ class EnvironmentDump(object):
                 except TypeError:
                     pass
         return result
+
