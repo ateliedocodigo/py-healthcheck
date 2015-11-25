@@ -6,18 +6,11 @@ import subprocess
 import sys
 import time
 import traceback
-
+from flask import request
 try:
     from functools import reduce
 except:
     pass
-
-try:
-    from types import NoneType
-except:
-    NoneType = type(None)
-
-from flask import request
 
 
 def basic_exception_handler(checker, e):
