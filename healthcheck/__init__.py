@@ -201,4 +201,3 @@ class EnvironmentDump(object):
                 except TypeError:
                     pass
         return result
-
