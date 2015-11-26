@@ -1,5 +1,9 @@
 # Healthcheck Changelog
 
+### 1.2.0
+- Adds support for Python 3.x. Thanks to Guilherme D'Amoreira for the pull
+request.
+
 ### 1.1.0
 - Added the `EnvironmentDump` class which provides a second endpoint for
 details about your application's environment.
