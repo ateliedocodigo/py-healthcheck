@@ -51,5 +51,25 @@ class BasicEnvironmentDumpTest(unittest.TestCase):
         jr = flask.json.loads(response.data)
         self.assertEqual("OK", jr["test_func"])
 
+
+class LazyHealthCheckTest(BasicHealthCheckTest):
+
+    def setUp(self):
+        super(LazyHealthCheckTest, self).setUp()
+        self.hc.init_app(self.app, self.path)
+
+    def _hc(self):
+        return HealthCheck()
+
+
+class LazyEnvironmentDumpTest(unittest.TestCase):
+
+    def setUp(self):
+        super(LazyEnvironmentDumpTest, self).setUp()
+        self.hc.init_app(self.app, self.path)
+
+    def _hc(self):
+        return EnvironmentDump()
+
 if __name__ == '__main__':
     unittest.main()

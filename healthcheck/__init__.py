@@ -2,11 +2,10 @@ import imp
 import json
 import os
 import socket
-import subprocess
 import sys
 import time
 import traceback
-from flask import request
+from flask import current_app
 try:
     from functools import reduce
 except:
@@ -46,9 +45,6 @@ class HealthCheck(object):
                  failed_handler=json_failed_handler, failed_ttl=9,
                  exception_handler=basic_exception_handler, checkers=None,
                  **options):
-
-        self.app = app
-        self.path = path
         self.cache = dict()
 
         self.success_status = success_status
@@ -66,8 +62,12 @@ class HealthCheck(object):
         self.options = options
         self.checkers = checkers or []
 
-        if self.app and self.path:
-            app.add_url_rule(self.path, view_func=self.check, **options)
+        if app:
+            self.init_app(app, path)
+
+    def init_app(self, app, path):
+        if path:
+            app.add_url_rule(path, view_func=self.check, **self.options)
 
     def add_check(self, func):
         self.checkers.append(func)
@@ -104,12 +104,12 @@ class HealthCheck(object):
         except:
             traceback.print_exc()
             e = sys.exc_info()[0]
-            self.app.logger.exception(e)
+            current_app.logger.exception(e)
             passed, output = self.exception_handler(checker, e)
 
         if not passed:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
-            self.app.logger.error(msg)
+            current_app.logger.error(msg)
 
         timestamp = time.time()
         if passed:
@@ -129,9 +129,6 @@ class EnvironmentDump(object):
     def __init__(self, app=None, path=None,
                  include_os=True, include_python=True,
                  include_config=True, include_process=True):
-        self.app = app
-        self.path = path
-
         self.functions = {}
         if include_os:
             self.functions['os'] = self.get_os
@@ -142,8 +139,12 @@ class EnvironmentDump(object):
         if include_process:
             self.functions['process'] = self.get_process
 
-        if self.app and self.path:
-            app.add_url_rule(self.path, view_func=self.dump_environment)
+        if app:
+            self.init_app(app, path)
+
+    def init_app(self, app, path):
+        if path:
+            app.add_url_rule(path, view_func=self.dump_environment)
 
     def add_section(self, name, func):
         if name in self.functions:
@@ -163,7 +164,7 @@ class EnvironmentDump(object):
                 'uname': os.uname()}
 
     def get_config(self):
-        return self.safe_dump(self.app.config)
+        return self.safe_dump(current_app.config)
 
     def get_python(self):
         result = {'version': sys.version,
