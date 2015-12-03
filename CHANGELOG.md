@@ -1,5 +1,11 @@
 # Healthcheck Changelog
 
+
+### 1.3.0
+- Adds support for init_app construction of healthcheck objects. Thanks to
+  Iuri de Silvio for the pull request.
+
+
 ### 1.2.0
 - Adds support for Python 3.x. Thanks to Guilherme D'Amoreira for the pull
 request.
