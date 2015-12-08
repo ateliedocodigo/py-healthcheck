@@ -12,7 +12,7 @@ except Exception:
     pass
 
 
-def basic_exception_handler(checker, e):
+def basic_exception_handler(_, e):
     return False, str(e)
 
 
