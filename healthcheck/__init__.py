@@ -8,11 +8,11 @@ import traceback
 from flask import current_app
 try:
     from functools import reduce
-except:
+except Exception:
     pass
 
 
-def basic_exception_handler(checker, e):
+def basic_exception_handler(_, e):
     return False, str(e)
 
 
@@ -36,6 +36,10 @@ def json_failed_handler(results):
     }
 
     return json.dumps(data)
+
+
+def check_reduce(passed, result):
+    return passed and result.get('passed')
 
 
 class HealthCheck(object):
@@ -82,8 +86,7 @@ class HealthCheck(object):
                 self.cache[checker] = result
             results.append(result)
 
-        fn = lambda passed, result: passed and result.get('passed')
-        passed = reduce(fn, results, True)
+        passed = reduce(check_reduce, results, True)
 
         if passed:
             message = "OK"
@@ -101,7 +104,7 @@ class HealthCheck(object):
     def run_check(self, checker):
         try:
             passed, output = checker()
-        except:
+        except Exception:
             traceback.print_exc()
             e = sys.exc_info()[0]
             current_app.logger.exception(e)
