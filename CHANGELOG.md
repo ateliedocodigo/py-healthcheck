@@ -1,5 +1,7 @@
 # Healthcheck Changelog
 
+### 1.3.1
+- Fix for 'Inappropriate ioctl for device' error on posix systems.
 
 ### 1.3.0
 - Adds support for init_app construction of healthcheck objects. Thanks to
