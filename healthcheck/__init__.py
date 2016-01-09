@@ -185,10 +185,22 @@ class EnvironmentDump(object):
 
         return result
 
+    def get_login(self):
+        # Based on https://github.com/gitpython-developers/GitPython/pull/43/
+        # Fix for 'Inappopropirate ioctl for device' on posix systems.
+        if os.name == "posix":
+            import pwd
+            username = pwd.getpwuid(os.geteuid()).pw_name
+        else:
+            username = os.environ.get('USER', os.environ.get('USERNAME', 'UNKNOWN'))
+            if username == 'UNKNOWN' and hasattr(os, 'getlogin'):
+                username = os.getlogin()
+        return username
+
     def get_process(self):
         return {'argv': sys.argv,
                 'cwd': os.getcwd(),
-                'user': os.getlogin(),
+                'user': self.get_login(),
                 'pid': os.getpid(),
                 'environ': self.safe_dump(os.environ)}
 
