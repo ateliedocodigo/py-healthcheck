@@ -1,6 +1,7 @@
 import imp
 import json
 import os
+import six
 import socket
 import sys
 import time
@@ -156,7 +157,7 @@ class EnvironmentDump(object):
 
     def dump_environment(self):
         data = {}
-        for (name, func) in self.functions.iteritems():
+        for (name, func) in six.iteritems(self.functions):
             data[name] = func()
 
         return json.dumps(data), 200, {'Content-Type': 'application/json'}
