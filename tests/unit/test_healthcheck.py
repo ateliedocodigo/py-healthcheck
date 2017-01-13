@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import unittest
 import json
-from healthcheck import HealthCheck, EnvironmentDump
+import unittest
+
+from healthcheck import HealthCheck
 
 
 class BasicHealthCheckTest(unittest.TestCase):

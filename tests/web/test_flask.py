@@ -47,13 +47,14 @@ class BasicEnvironmentDumpTest(unittest.TestCase):
         self.app.add_url_rule(self.path, view_func=lambda: self.hc.run())
 
     def _hc(self):
-        return EnvironmentDump(self.app, self.path)
+        return EnvironmentDump()
 
     def test_basic_check(self):
         def test_ok():
             return "OK"
 
         self.hc.add_section("test_func", test_ok)
+        self.hc.add_section("config", self.app.config)
 
         response = self.client.get(self.path)
         self.assertEqual(200, response.status_code)
