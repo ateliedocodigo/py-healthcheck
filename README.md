@@ -1,8 +1,8 @@
 Healthcheck
 ----------
 
-Healthcheck wraps a Flask app object and adds a way to write simple heathcheck
-functions that can be use to monitor your application. It's useful for
+Healthcheck wraps a Flask app object and adds a way to write simple healthcheck
+functions that can be used to monitor your application. It's useful for
 asserting that your dependencies are up and running and your application can
 respond to HTTP requests. The Healthcheck functions are exposed via a user
 defined flask route so you can use an external monitoring application (monit,
