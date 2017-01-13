@@ -11,7 +11,8 @@ class EnvironmentDump(object):
     def __init__(self,
                  include_os=True,
                  include_python=True,
-                 include_process=True):
+                 include_process=True,
+                 **kwargs):
         self.functions = {}
         if include_os:
             self.functions['os'] = self.get_os
@@ -19,6 +20,9 @@ class EnvironmentDump(object):
             self.functions['python'] = self.get_python
         if include_process:
             self.functions['process'] = self.get_process
+
+        # ads custom_sections on signature
+        [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
 
     def add_section(self, name, func):
         if name in self.functions:
