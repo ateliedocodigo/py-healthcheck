@@ -5,7 +5,7 @@ import tornado.web
 
 class TornadoHandler(tornado.web.RequestHandler):
 
-    def initialize(self, checker, **options):
+    def initialize(self, checker):
         self.checker = checker
 
     def get(self):
