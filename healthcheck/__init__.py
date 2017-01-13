@@ -1,12 +1,15 @@
-import imp
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import json
+import logging
 import os
-import six
 import socket
 import sys
 import time
 import traceback
-from flask import current_app
+
+import six
+
 try:
     from functools import reduce
 except Exception:
@@ -44,12 +47,11 @@ def check_reduce(passed, result):
 
 
 class HealthCheck(object):
-    def __init__(self, app=None, path=None, success_status=200,
+    def __init__(self, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
                  failed_handler=json_failed_handler, failed_ttl=9,
-                 exception_handler=basic_exception_handler, checkers=None,
-                 **options):
+                 exception_handler=basic_exception_handler, checkers=None):
         self.cache = dict()
 
         self.success_status = success_status
@@ -64,20 +66,12 @@ class HealthCheck(object):
 
         self.exception_handler = exception_handler
 
-        self.options = options
         self.checkers = checkers or []
-
-        if app:
-            self.init_app(app, path)
-
-    def init_app(self, app, path):
-        if path:
-            app.add_url_rule(path, view_func=self.check, **self.options)
 
     def add_check(self, func):
         self.checkers.append(func)
 
-    def check(self):
+    def run(self):
         results = []
         for checker in self.checkers:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
@@ -108,12 +102,12 @@ class HealthCheck(object):
         except Exception:
             traceback.print_exc()
             e = sys.exc_info()[0]
-            current_app.logger.exception(e)
+            logging.exception(e)
             passed, output = self.exception_handler(checker, e)
 
         if not passed:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
-            current_app.logger.error(msg)
+            logging.error(msg)
 
         timestamp = time.time()
         if passed:
@@ -130,32 +124,24 @@ class HealthCheck(object):
 
 
 class EnvironmentDump(object):
-    def __init__(self, app=None, path=None,
-                 include_os=True, include_python=True,
-                 include_config=True, include_process=True):
+    def __init__(self,
+                 include_os=True,
+                 include_python=True,
+                 include_process=True):
         self.functions = {}
         if include_os:
             self.functions['os'] = self.get_os
         if include_python:
             self.functions['python'] = self.get_python
-        if include_config:
-            self.functions['config'] = self.get_config
         if include_process:
             self.functions['process'] = self.get_process
-
-        if app:
-            self.init_app(app, path)
-
-    def init_app(self, app, path):
-        if path:
-            app.add_url_rule(path, view_func=self.dump_environment)
 
     def add_section(self, name, func):
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         self.functions[name] = func
 
-    def dump_environment(self):
+    def run(self):
         data = {}
         for (name, func) in six.iteritems(self.functions):
             data[name] = func()
@@ -167,9 +153,6 @@ class EnvironmentDump(object):
                 'name': os.name,
                 'uname': os.uname()}
 
-    def get_config(self):
-        return self.safe_dump(current_app.config)
-
     def get_python(self):
         result = {'version': sys.version,
                   'executable': sys.executable,
@@ -179,10 +162,12 @@ class EnvironmentDump(object):
                                    'micro': sys.version_info.micro,
                                    'releaselevel': sys.version_info.releaselevel,
                                    'serial': sys.version_info.serial}}
-        if imp.find_module('pip'):
+        try:
             import pip
             packages = dict([(p.project_name, p.version) for p in pip.get_installed_distributions()])
             result['packages'] = packages
+        except:
+            pass
 
         return result
 
