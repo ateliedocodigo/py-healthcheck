@@ -1,12 +1,13 @@
 Healthcheck
 ----------
 
-Healthcheck wraps a Flask app object and adds a way to write simple healthcheck
-functions that can be used to monitor your application. It's useful for
-asserting that your dependencies are up and running and your application can
-respond to HTTP requests. The Healthcheck functions are exposed via a user
-defined flask route so you can use an external monitoring application (monit,
-nagios, Runscope, etc.) to check the status and uptime of your application.
+Healthcheck is a library to write simple healthcheck functions that can be used
+to monitor your application. It is possible to use in a `Flak` app or
+`Tornado` app. It's useful for asserting that your dependencies are up and
+running and your application can respond to HTTP requests. The Healthcheck
+functions can be exposed via a user defined `Flask` route so you can use an
+external monitoring application (`monit`, `nagios`, `Runscope`, etc.) to check
+the status and uptime of your application.
 
 New in version 1.1: Healthcheck also gives you a simple Flask route to view
 information about your application's environment. By default, this includes
@@ -23,7 +24,7 @@ pip install healthcheck
 
 ## Usage
 
-Here's an example of basic usage:
+Here's an example of basic usage with `Flask`:
 
 ```python
 from flask import Flask
@@ -31,9 +32,8 @@ from healthcheck import HealthCheck, EnvironmentDump
 
 app = Flask(__name__)
 
-# wrap the flask app and give a heathcheck url
-health = HealthCheck(app, "/healthcheck")
-envdump = EnvironmentDump(app, "/environment")
+health = HealthCheck()
+envdump = EnvironmentDump()
 
 # add your own check function to the healthcheck
 def redis_available():
@@ -49,6 +49,80 @@ def application_data():
 	        "git_repo": "https://github.com/Runscope/healthcheck"}
 
 envdump.add_section("application", application_data)
+
+# Add a flask route to expose information
+app.add_url_rule("/healthcheck", view_func=lambda: health.run())
+app.add_url_rule("/environment", view_func=lambda: envdump.run())
+
+```
+
+To use with `Tornado` you can import the `TornadoHandler`:
+
+```python
+import tornado.web
+from healthcheck import TornadoHandler, HealthCheck, EnvironmentDump
+
+app = tornado.web.Application()
+
+health = HealthCheck()
+envdump = EnvironmentDump()
+
+# add your own check function to the healthcheck
+def redis_available():
+    client = _redis_client()
+    info = client.info()
+    return True, "redis ok"
+
+health.add_check(redis_available)
+
+# add your own data to the environment dump
+def application_data():
+    return {"maintainer": "Frank Stratton",
+            "git_repo": "https://github.com/Runscope/healthcheck"}
+
+envdump.add_section("application", application_data)
+
+# Add a flask route to expose information
+app.add_handlers(
+    r".*",
+    [
+        (
+            "/healthcheck",
+            TornadoHandler, dict(checker=health)
+        ),
+        (
+            "/environment",
+            TornadoHandler, dict(checker=envdump)
+        ),
+    ]
+)
+```
+
+Alternatively you can set all together:
+
+```python
+import tornado.web
+from healthcheck import TornadoHandler, HealthCheck, EnvironmentDump
+
+# add your own check function to the healthcheck
+def redis_available():
+    client = _redis_client()
+    info = client.info()
+    return True, "redis ok"
+
+health = HealthCheck(checkers=[redis_available])
+
+# add your own data to the environment dump
+def application_data():
+    return {"maintainer": "Frank Stratton",
+            "git_repo": "https://github.com/Runscope/healthcheck"}
+
+envdump = EnvironmentDump(application=application_data)
+
+app = tornado.web.Application([
+    ("/healthcheck", TornadoHandler, dict(checker=health)),
+    ("/environment", TornadoHandler, dict(checker=envdump)),
+])
 ```
 
 To run all of your check functions, make a request to the healthcheck URL
@@ -77,7 +151,6 @@ messages/debugging.
 ```python
 # add check functions
 def addition_works():
-
 	if 1 + 1 == 2:
 		return True, "addition works"
 	else:
@@ -100,7 +173,7 @@ Will output:
 ```json
 {
 	"status": "failure",
-		"results": [
+	"results": [
 		{
 			"output": "'NoneType' object has no attribute '__getitem__'",
 			"checker": "throws_exception",
@@ -145,8 +218,6 @@ By default, EnvironmentDump data includes these 4 sections:
 installed packages.
 * `process`: information about the currently running Python process, including
 the PID, command line arguments, and all environment variables.
-* `config`: information about your Flask app's configuration, pulled from
-`app.config`.
 
 Some of the data is scrubbed to avoid accidentally exposing passwords or access
 keys/tokens. Config keys and environment variable names are scanned for `key`,
@@ -159,9 +230,9 @@ For security reasons, you may want to disable an entire section. You can
 disable sections when you instantiate the `EnvironmentDump` object, like this:
 
 ```python
-envdump = EnvironmentDump(app, "/environment",
-                          include_python=False, include_os=False,
-                          include_process=False, include_config=False)
+envdump = EnvironmentDump(include_python=False, 
+                          include_os=False,
+                          include_process=False)
 ```
 
 ### Adding custom data sections
@@ -172,8 +243,9 @@ Here's an example of how this would be used:
 ```python
 def application_data():
 	return {"maintainer": "Frank Stratton",
-	        "git_repo": "https://github.com/Runscope/healthcheck"}
+	        "git_repo": "https://github.com/Runscope/healthcheck"
+            "config": app.config}
 
-envdump = EnvironmentDump(app, "/environment")
+envdump = EnvironmentDump()
 envdump.add_section("application", application_data)
 ```
