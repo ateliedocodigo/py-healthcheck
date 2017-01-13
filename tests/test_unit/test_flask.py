@@ -1,5 +1,5 @@
-from __future__ import with_statement
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import unittest
 
 import flask
