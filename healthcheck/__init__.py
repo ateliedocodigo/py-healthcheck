@@ -15,6 +15,11 @@ try:
 except Exception:
     pass
 
+try:
+    from .tornado_handler import TornadoHandler
+except ImportError:
+    pass
+
 
 def basic_exception_handler(_, e):
     return False, str(e)
