@@ -82,7 +82,7 @@ def application_data():
 
 envdump.add_section("application", application_data)
 
-# Add a flask route to expose information
+# Add a tornado handler to expose information
 app.add_handlers(
     r".*",
     [
