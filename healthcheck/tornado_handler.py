@@ -8,7 +8,7 @@ class TornadoHandler(tornado.web.RequestHandler):
     def initialize(self, checker):
         self.checker = checker
 
-    def get(self):
+    def get(self, *args, **kwargs):
         message, status_code, headers = self.checker.run()
         self.set_status(status_code)
         self.write(message)
