@@ -1,7 +1,9 @@
-from __future__ import with_statement
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import unittest
+
 import flask
+
 from healthcheck import HealthCheck, EnvironmentDump
 
 
@@ -13,8 +15,10 @@ class BasicHealthCheckTest(unittest.TestCase):
         self.hc = self._hc()
         self.client = self.app.test_client()
 
+        self.app.add_url_rule(self.path, view_func=lambda: self.hc.run())
+
     def _hc(self):
-        return HealthCheck(self.app, self.path)
+        return HealthCheck()
 
     def test_basic_check(self):
         response = self.client.get(self.path)
@@ -28,6 +32,9 @@ class BasicHealthCheckTest(unittest.TestCase):
         response = self.client.get(self.path)
         self.assertEqual(500, response.status_code)
 
+        jr = flask.json.loads(response.data)
+        self.assertEqual("failure", jr["status"])
+
 
 class BasicEnvironmentDumpTest(unittest.TestCase):
 
@@ -37,39 +44,23 @@ class BasicEnvironmentDumpTest(unittest.TestCase):
         self.hc = self._hc()
         self.client = self.app.test_client()
 
+        self.app.add_url_rule(self.path, view_func=lambda: self.hc.run())
+
     def _hc(self):
-        return EnvironmentDump(self.app, self.path)
+        return EnvironmentDump()
 
     def test_basic_check(self):
         def test_ok():
             return "OK"
 
         self.hc.add_section("test_func", test_ok)
+        self.hc.add_section("config", self.app.config)
 
         response = self.client.get(self.path)
         self.assertEqual(200, response.status_code)
         jr = flask.json.loads(response.data)
         self.assertEqual("OK", jr["test_func"])
 
-
-class LazyHealthCheckTest(BasicHealthCheckTest):
-
-    def setUp(self):
-        super(LazyHealthCheckTest, self).setUp()
-        self.hc.init_app(self.app, self.path)
-
-    def _hc(self):
-        return HealthCheck()
-
-
-class LazyEnvironmentDumpTest(unittest.TestCase):
-
-    def setUp(self):
-        super(LazyEnvironmentDumpTest, self).setUp()
-        self.hc.init_app(self.app, self.path)
-
-    def _hc(self):
-        return EnvironmentDump()
 
 if __name__ == '__main__':
     unittest.main()
