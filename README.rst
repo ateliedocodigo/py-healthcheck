@@ -1,6 +1,9 @@
 Healthcheck
 -----------
 
+.. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
+    :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
+
 Healthcheck is a library to write simple healthcheck functions that can
 be used to monitor your application. It is possible to use in a ``Flak``
 app or ``Tornado`` app. It's useful for asserting that your dependencies
@@ -21,7 +24,7 @@ Installing
 
 ::
 
-    pip install healthcheck
+    pip install py-healthcheck
 
 Usage
 -----
@@ -48,8 +51,8 @@ Here's an example of basic usage with ``Flask``:
 
     # add your own data to the environment dump
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
 
     envdump.add_section("application", application_data)
 
@@ -79,8 +82,8 @@ To use with ``Tornado`` you can import the ``TornadoHandler``:
 
     # add your own data to the environment dump
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
 
     envdump.add_section("application", application_data)
 
@@ -116,8 +119,8 @@ Alternatively you can set all together:
 
     # add your own data to the environment dump
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
 
     envdump = EnvironmentDump(application=application_data)
 
@@ -254,9 +257,17 @@ your own. Here's an example of how this would be used:
 .. code:: python
 
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"
                 "config": app.config}
 
     envdump = EnvironmentDump()
     envdump.add_section("application", application_data)
+
+
+Credits
+-------
+
+This project was forked from `Runscope/healthcheck 
+<https://github.com/Runscope/healthcheck>`_. since ``1.3.1``
+
