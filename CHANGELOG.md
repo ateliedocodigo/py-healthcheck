@@ -1,5 +1,8 @@
 # Healthcheck Changelog
 
+### Next Release
+- Add tornado support.
+
 ### 1.3.1
 - Fix for 'Inappropriate ioctl for device' error on posix systems.
 
