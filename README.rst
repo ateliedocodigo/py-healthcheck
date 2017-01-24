@@ -52,7 +52,7 @@ Here's an example of basic usage with ``Flask``:
     # add your own data to the environment dump
     def application_data():
         return {"maintainer": "Luis Fernando Gomes",
-                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
     envdump.add_section("application", application_data)
 
@@ -83,7 +83,7 @@ To use with ``Tornado`` you can import the ``TornadoHandler``:
     # add your own data to the environment dump
     def application_data():
         return {"maintainer": "Luis Fernando Gomes",
-                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
     envdump.add_section("application", application_data)
 
@@ -120,7 +120,7 @@ Alternatively you can set all together:
     # add your own data to the environment dump
     def application_data():
         return {"maintainer": "Luis Fernando Gomes",
-                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck}
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
     envdump = EnvironmentDump(application=application_data)
 
