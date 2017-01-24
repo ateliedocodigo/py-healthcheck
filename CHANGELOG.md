@@ -1,6 +1,6 @@
 # Healthcheck Changelog
 
-### Next Release
+### 1.4.0
 - Add tornado support.
 
 ### 1.3.1
