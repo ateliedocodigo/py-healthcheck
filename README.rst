@@ -1,6 +1,9 @@
 Healthcheck
 -----------
 
+.. image:: https://badge.fury.io/py/py-healthcheck.svg
+    :target: https://badge.fury.io/py/py-healthcheck
+
 .. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
     :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
 
