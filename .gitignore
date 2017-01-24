@@ -18,6 +18,8 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+env
+venv
 
 # Installer logs
 pip-log.txt
