@@ -1,8 +1,14 @@
 Healthcheck
 -----------
 
+.. image:: https://badge.fury.io/py/py-healthcheck.svg
+    :target: https://badge.fury.io/py/py-healthcheck
+
+.. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
+    :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
+
 Healthcheck is a library to write simple healthcheck functions that can
-be used to monitor your application. It is possible to use in a ``Flak``
+be used to monitor your application. It is possible to use in a ``Flask``
 app or ``Tornado`` app. It's useful for asserting that your dependencies
 are up and running and your application can respond to HTTP requests.
 The Healthcheck functions can be exposed via a user defined ``Flask``
@@ -21,7 +27,7 @@ Installing
 
 ::
 
-    pip install healthcheck
+    pip install py-healthcheck
 
 Usage
 -----
@@ -48,8 +54,8 @@ Here's an example of basic usage with ``Flask``:
 
     # add your own data to the environment dump
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
     envdump.add_section("application", application_data)
 
@@ -77,11 +83,13 @@ To use with ``Tornado`` you can import the ``TornadoHandler``:
 
     health.add_check(redis_available)
 
-    # add your own data to the environment dump
+    # add your own data to the environment dump or healthcheck
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
+    # ou choose where you want to output this information
+    health.add_section("application", application_data)
     envdump.add_section("application", application_data)
 
     # Add a tornado handler to expose information
@@ -116,8 +124,8 @@ Alternatively you can set all together:
 
     # add your own data to the environment dump
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"}
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
     envdump = EnvironmentDump(application=application_data)
 
@@ -254,9 +262,17 @@ your own. Here's an example of how this would be used:
 .. code:: python
 
     def application_data():
-        return {"maintainer": "Frank Stratton",
-                "git_repo": "https://github.com/Runscope/healthcheck"
+        return {"maintainer": "Luis Fernando Gomes",
+                "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"
                 "config": app.config}
 
     envdump = EnvironmentDump()
     envdump.add_section("application", application_data)
+
+
+Credits
+-------
+
+This project was forked from `Runscope/healthcheck 
+<https://github.com/Runscope/healthcheck>`_. since ``1.3.1``
+
