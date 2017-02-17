@@ -1,6 +1,6 @@
 # Healthcheck Changelog
 
-### Next Release
+### 1.5.0
 - Adds `HealthCheck.add_section` to increase output
 
 ### 1.4.0
