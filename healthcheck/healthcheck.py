@@ -7,6 +7,8 @@ import sys
 import time
 import traceback
 
+import six
+
 try:
     from functools import reduce
 except Exception:
@@ -17,25 +19,25 @@ def basic_exception_handler(_, e):
     return False, str(e)
 
 
-def json_success_handler(results):
+def json_success_handler(results, *args, **kw):
     data = {
         'hostname': socket.gethostname(),
         'status': 'success',
         'timestamp': time.time(),
         'results': results,
     }
-
+    [data.update({k: v}) for k, v in kw.items()]
     return json.dumps(data)
 
 
-def json_failed_handler(results):
+def json_failed_handler(results, *args, **kw):
     data = {
         'hostname': socket.gethostname(),
         'status': 'failure',
         'timestamp': time.time(),
         'results': results,
     }
-
+    [data.update({k: v}) for k, v in kw.items()]
     return json.dumps(data)
 
 
@@ -48,7 +50,8 @@ class HealthCheck(object):
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
                  failed_handler=json_failed_handler, failed_ttl=9,
-                 exception_handler=basic_exception_handler, checkers=None):
+                 exception_handler=basic_exception_handler, checkers=None,
+                 **kwargs):
         self.cache = dict()
 
         self.success_status = success_status
@@ -65,6 +68,15 @@ class HealthCheck(object):
 
         self.checkers = checkers or []
 
+        self.functions = dict()
+        # ads custom_sections on signature
+        [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
+
+    def add_section(self, name, func):
+        if name in self.functions:
+            raise Exception('The name "{}" is already taken.'.format(name))
+        self.functions[name] = func
+
     def add_check(self, func):
         self.checkers.append(func)
 
@@ -78,18 +90,25 @@ class HealthCheck(object):
                 self.cache[checker] = result
             results.append(result)
 
+        custom_section = dict()
+        for (name, func) in six.iteritems(self.functions):
+            try:
+                custom_section[name] = func()
+            except Exception:
+                pass
+
         passed = reduce(check_reduce, results, True)
 
         if passed:
             message = "OK"
             if self.success_handler:
-                message = self.success_handler(results)
+                message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
         else:
             message = "NOT OK"
             if self.failed_handler:
-                message = self.failed_handler(results)
+                message = self.failed_handler(results, **custom_section)
 
             return message, self.failed_status, self.failed_headers
 

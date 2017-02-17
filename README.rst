@@ -8,7 +8,7 @@ Healthcheck
     :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
 
 Healthcheck is a library to write simple healthcheck functions that can
-be used to monitor your application. It is possible to use in a ``Flak``
+be used to monitor your application. It is possible to use in a ``Flask``
 app or ``Tornado`` app. It's useful for asserting that your dependencies
 are up and running and your application can respond to HTTP requests.
 The Healthcheck functions can be exposed via a user defined ``Flask``
@@ -83,11 +83,13 @@ To use with ``Tornado`` you can import the ``TornadoHandler``:
 
     health.add_check(redis_available)
 
-    # add your own data to the environment dump
+    # add your own data to the environment dump or healthcheck
     def application_data():
         return {"maintainer": "Luis Fernando Gomes",
                 "git_repo": "https://github.com/ateliedocodigo/py-healthcheck"}
 
+    # ou choose where you want to output this information
+    health.add_section("application", application_data)
     envdump.add_section("application", application_data)
 
     # Add a tornado handler to expose information
