@@ -1,6 +1,9 @@
 Healthcheck
 -----------
 
+.. image:: py-healthcheck.jpg
+    :target: https://pypi.python.org/pypi/py-healthcheck
+
 .. image:: https://badge.fury.io/py/py-healthcheck.svg
     :target: https://badge.fury.io/py/py-healthcheck
 
