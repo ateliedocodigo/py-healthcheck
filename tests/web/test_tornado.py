@@ -88,7 +88,6 @@ class BasicEnvironmentDumpTest(AsyncHTTPTestCase):
 
         response = self.fetch(self.path)
         self.assertEqual(response.code, 200)
-        print(response.body.decode('ascii'))
         jr = json.loads(response.body.decode('ascii'))
         self.assertEqual("OK", jr["test_func"])
 
