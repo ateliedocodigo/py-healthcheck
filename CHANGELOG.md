@@ -1,6 +1,6 @@
 # Healthcheck Changelog
 
-### Next Release
+### 1.6.0
 - Adds timeout on execution checkers.
 
 ### 1.5.0
