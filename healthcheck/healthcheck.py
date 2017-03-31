@@ -9,6 +9,8 @@ import traceback
 
 import six
 
+from .timeout import timeout
+
 try:
     from functools import reduce
 except Exception:
@@ -50,6 +52,7 @@ class HealthCheck(object):
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
                  failed_handler=json_failed_handler, failed_ttl=9,
+                 error_timeout=10,
                  exception_handler=basic_exception_handler, checkers=None,
                  **kwargs):
         self.cache = dict()
@@ -63,6 +66,8 @@ class HealthCheck(object):
         self.failed_headers = failed_headers or {'Content-Type': 'application/json'}
         self.failed_handler = failed_handler
         self.failed_ttl = float(failed_ttl or 0)
+
+        self.error_timeout = error_timeout
 
         self.exception_handler = exception_handler
 
@@ -114,7 +119,7 @@ class HealthCheck(object):
 
     def run_check(self, checker):
         try:
-            passed, output = checker()
+            passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
         except Exception:
             traceback.print_exc()
             e = sys.exc_info()[0]

@@ -27,6 +27,9 @@ class EnvironmentDump(object):
     def add_section(self, name, func):
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
+        if not hasattr(func, '__call__'):
+            self.functions[name] = lambda: func
+            return
         self.functions[name] = func
 
     def run(self):
@@ -34,7 +37,7 @@ class EnvironmentDump(object):
         for (name, func) in six.iteritems(self.functions):
             data[name] = func()
 
-        return json.dumps(data), 200, {'Content-Type': 'application/json'}
+        return json.dumps(data, default=str), 200, {'Content-Type': 'application/json'}
 
     def get_os(self):
         return {'platform': sys.platform,
@@ -86,7 +89,7 @@ class EnvironmentDump(object):
                 result[key] = "********"
             else:
                 try:
-                    json.dumps(dictionary[key])
+                    json.dumps(dictionary[key], default=str)
                     result[key] = dictionary[key]
                 except TypeError:
                     pass

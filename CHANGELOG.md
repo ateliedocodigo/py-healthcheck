@@ -1,5 +1,8 @@
 # Healthcheck Changelog
 
+### 1.6.0
+- Adds timeout on execution checkers.
+
 ### 1.5.0
 - Adds `HealthCheck.add_section` to increase output
 
