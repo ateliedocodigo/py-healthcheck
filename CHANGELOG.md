@@ -1,5 +1,8 @@
 # Healthcheck Changelog
 
+### 1.6.1
+- Change default timeout to 0 (no timeout).
+
 ### 1.6.0
 - Adds timeout on execution checkers.
 

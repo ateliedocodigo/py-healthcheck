@@ -52,7 +52,7 @@ class HealthCheck(object):
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
                  failed_handler=json_failed_handler, failed_ttl=9,
-                 error_timeout=10,
+                 error_timeout=0,
                  exception_handler=basic_exception_handler, checkers=None,
                  **kwargs):
         self.cache = dict()
@@ -119,7 +119,10 @@ class HealthCheck(object):
 
     def run_check(self, checker):
         try:
-            passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
+            if self.error_timeout > 0:
+                passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
+            else:
+                passed, output = checker()
         except Exception:
             traceback.print_exc()
             e = sys.exc_info()[0]

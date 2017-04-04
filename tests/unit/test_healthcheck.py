@@ -89,17 +89,17 @@ class BasicHealthCheckTest(unittest.TestCase):
 
 class TimeoutHealthCheckTest(unittest.TestCase):
 
-    def test_default_timeout_function_should_failing_check(self):
+    def test_default_timeout_should_success_check(self):
         def timeout_check():
             import time
-            time.sleep(15)
+            time.sleep(10)
             return True, "Waited for 10 seconds"
 
         hc = HealthCheck(checkers=[timeout_check])
         message, status, headers = hc.run()
-        self.assertEqual(500, status)
+        self.assertEqual(200, status)
         jr = json.loads(message)
-        self.assertEqual("failure", jr["status"])
+        self.assertEqual("success", jr["status"])
 
     def test_error_timeout_function_should_failing_check(self):
         def timeout_check():
