@@ -118,6 +118,7 @@ class HealthCheck(object):
             return message, self.failed_status, self.failed_headers
 
     def run_check(self, checker):
+        started_at = time.time()
         try:
             if self.error_timeout > 0:
                 passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
@@ -128,6 +129,8 @@ class HealthCheck(object):
             e = sys.exc_info()[0]
             logging.exception(e)
             passed, output = self.exception_handler(checker, e)
+
+        elapsed_time = time.time() - started_at
 
         if not passed:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
@@ -143,5 +146,6 @@ class HealthCheck(object):
                   'output': output,
                   'passed': passed,
                   'timestamp': timestamp,
-                  'expires': expires}
+                  'expires': expires,
+                  'response_time': elapsed_time}
         return result
