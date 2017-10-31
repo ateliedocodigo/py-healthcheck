@@ -2,6 +2,7 @@
 
 ### Next Release
 
+* Code checks with ``flake8`` instead of ``pep8``, fixes #9
 * Adds response_time to check output, closes #4
 
 ### 1.6.1

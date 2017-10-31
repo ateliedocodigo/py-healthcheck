@@ -57,7 +57,7 @@ class EnvironmentDump(object):
             import pip
             packages = dict([(p.project_name, p.version) for p in pip.get_installed_distributions()])
             result['packages'] = packages
-        except:
+        except Exception:
             pass
 
         return result

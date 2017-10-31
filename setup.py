@@ -9,6 +9,7 @@ __repo__ = "https://github.com/ateliedocodigo/py-healthcheck"
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
     name="py-healthcheck",
     version=__version__,
