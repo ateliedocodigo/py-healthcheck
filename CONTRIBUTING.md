@@ -31,8 +31,7 @@ $ git commit -m "commit message"
 
 Example: 
 ```
-Next Release
------
+### Next Release
 
 * My changes closes #1
 ```
