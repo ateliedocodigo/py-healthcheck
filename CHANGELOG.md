@@ -1,5 +1,9 @@
 # Healthcheck Changelog
 
+### Next Release
+
+* Adds response_time to check output, closes #4
+
 ### 1.6.1
 - Change default timeout to 0 (no timeout).
 
