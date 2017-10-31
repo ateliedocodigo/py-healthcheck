@@ -1,7 +1,7 @@
 Healthcheck
 -----------
 
-.. image:: py-healthcheck.jpg
+.. image:: https://github.com/ateliedocodigo/py-healthcheck/raw/develop/py-healthcheck.jpg
     :target: https://pypi.python.org/pypi/py-healthcheck
 
 .. image:: https://badge.fury.io/py/py-healthcheck.svg
@@ -63,8 +63,8 @@ Here's an example of basic usage with ``Flask``:
     envdump.add_section("application", application_data)
 
     # Add a flask route to expose information
-    app.add_url_rule("/healthcheck", view_func=lambda: health.run())
-    app.add_url_rule("/environment", view_func=lambda: envdump.run())
+    app.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
+    app.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
 
 To use with ``Tornado`` you can import the ``TornadoHandler``:
 

@@ -118,6 +118,8 @@ class HealthCheck(object):
             return message, self.failed_status, self.failed_headers
 
     def run_check(self, checker):
+        start_time = time.time()
+
         try:
             if self.error_timeout > 0:
                 passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
@@ -128,6 +130,11 @@ class HealthCheck(object):
             e = sys.exc_info()[0]
             logging.exception(e)
             passed, output = self.exception_handler(checker, e)
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        # Reduce to 6 decimal points to have consistency with timestamp
+        elapsed_time = float('{:.6f}'.format(elapsed_time))
 
         if not passed:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
@@ -143,5 +150,6 @@ class HealthCheck(object):
                   'output': output,
                   'passed': passed,
                   'timestamp': timestamp,
-                  'expires': expires}
+                  'expires': expires,
+                  'response_time': elapsed_time}
         return result
