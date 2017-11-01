@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 try:
-    from functools import reduce
+    from functools import reduce  # noqa
 except Exception:
     pass
 
 try:
-    from .tornado_handler import TornadoHandler
+    from .tornado_handler import TornadoHandler  # noqa
 except ImportError:
     pass
 
-from .environmentdump import EnvironmentDump
-from .healthcheck import HealthCheck
+from .environmentdump import EnvironmentDump  # noqa
+from .healthcheck import HealthCheck  # noqa

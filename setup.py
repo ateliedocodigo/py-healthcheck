@@ -2,12 +2,13 @@
 import os
 from setuptools import setup, find_packages
 
-__version__ = "1.6.1"
+__version__ = "1.7.0"
 __repo__ = "https://github.com/ateliedocodigo/py-healthcheck"
 
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 setup(
     name="py-healthcheck",
