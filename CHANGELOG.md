@@ -1,6 +1,6 @@
 # Healthcheck Changelog
 
-### Next Release
+### 1.7.0
 
 * Code checks with ``flake8`` instead of ``pep8``, fixes #9
 * Adds response_time to check output, closes #4
