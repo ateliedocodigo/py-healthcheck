@@ -9,3 +9,12 @@ env:
   - TOXENV=py3
   - TOXENV=flask
   - TOXENV=tornado
+deploy:
+  provider: pypi
+#  server: https://test.pypi.org/legacy/
+  user: luiscoms
+  password:
+    secure: MXfu3Yiykk7VH/0jGZwQcjRfAI3RQ6rcytxhq6f3Qupx5VlYQ/NSErzuvqaZa3htUF/giEPBYNa4Ibssyhg21ALf3l66ZpPs/ht3ust66v/dt60VIhrPn5doIDnljuB0VquvRpr6Pk17BJjsAWRZ6K3ZgM6Swkhl9Lqcj7UK8eWUP/0r6qJa1UbirlucS4jCa512kyqWLASA9a6qYp/FBmC9yH1QcM0ssmQdX1SHw73ye/aXSG76vVLT+EVd78NUi1o3mG81C7Fm4/FWYYSBXmeKkXkGRKtRNG3lBoCNaqoPn4mYqlxufbsRXnlcG8E82cXpA4vu+AaST2D84S/xASaTTrI8LO693VFhfd+GtuE+WIh9yWUTj9GXbdMdOmFbzS3ijKECyqrjLsW7WXJaJe/mD5dz/OSfPw117zunx7WcUSTSiqD2FPj4dsrZ6l1KYWAfltaBivx9uiC4ootay7mrby/swwoWL2nMMcVbjnQEuUifnYCa2vGBwSrbNP5ToDkV8kCjAEVUr+MGadB4slwOWpOCVcayrxwLvL6HFmIgnE0AiWmKwKnGEzUAzUuHzi4LLAGuvo5XR0neZS48ZRyc0aSFUl1L7ki+NT9wypFKsTkEvNeZEWamp01x05y/hPp7x4fwuL8M89mE1+hgCgvX2L8b2efmHVeq3ve4vSE=
+  on:
+    tags: true
+#    branch: pypitest
