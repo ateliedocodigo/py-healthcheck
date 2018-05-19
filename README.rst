@@ -7,12 +7,13 @@ Healthcheck
 .. image:: https://badge.fury.io/py/py-healthcheck.svg
     :target: https://badge.fury.io/py/py-healthcheck
 
-.. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
-    :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
-
 .. image:: https://requires.io/github/ateliedocodigo/py-healthcheck/requirements.svg?branch=develop
      :target: https://requires.io/github/ateliedocodigo/py-healthcheck/requirements/?branch=develop
      :alt: Requirements Status
+
+.. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
+    :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
+
 
 Healthcheck is a library to write simple healthcheck functions that can
 be used to monitor your application. It is possible to use in a ``Flask``
