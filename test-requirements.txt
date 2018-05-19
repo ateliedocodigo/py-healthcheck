@@ -1,5 +1,4 @@
--r requirements.txt
-pylint==1.2.1
-flake8==3.5.0
+pylint
+flake8
 flask
 tornado
