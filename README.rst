@@ -10,6 +10,10 @@ Healthcheck
 .. image:: https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop
     :target: https://travis-ci.org/ateliedocodigo/py-healthcheck
 
+.. image:: https://requires.io/github/ateliedocodigo/py-healthcheck/requirements.svg?branch=develop
+     :target: https://requires.io/github/ateliedocodigo/py-healthcheck/requirements/?branch=develop
+     :alt: Requirements Status
+
 Healthcheck is a library to write simple healthcheck functions that can
 be used to monitor your application. It is possible to use in a ``Flask``
 app or ``Tornado`` app. It's useful for asserting that your dependencies
