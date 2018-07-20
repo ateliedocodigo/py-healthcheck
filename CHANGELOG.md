@@ -1,6 +1,6 @@
 # Healthcheck Changelog
 
-### Next Release
+### 1.7.1
 
 * Change call of `os.uname()` to `platform.uname()`, fixes #13
 
