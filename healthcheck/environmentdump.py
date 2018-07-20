@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import json
-import os
 import sys
 
+import json
+import os
+import platform
 import six
 
 
@@ -42,7 +43,7 @@ class EnvironmentDump(object):
     def get_os(self):
         return {'platform': sys.platform,
                 'name': os.name,
-                'uname': os.uname()}
+                'uname': platform.uname()}
 
     def get_python(self):
         result = {'version': sys.version,
