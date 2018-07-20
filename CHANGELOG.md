@@ -1,5 +1,9 @@
 # Healthcheck Changelog
 
+### 1.7.1
+
+* Change call of `os.uname()` to `platform.uname()`, fixes #13
+
 ### 1.7.0
 
 * Code checks with ``flake8`` instead of ``pep8``, fixes #9
