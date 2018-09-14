@@ -1,4 +1,6 @@
 # Healthcheck Changelog
+### Next Release
+* Fix comaptibility issue with FreeBSD
 
 ### 1.7.1
 
