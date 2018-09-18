@@ -20,4 +20,5 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+    condition: $TOXENV = py3
 #    branch: pypitest
