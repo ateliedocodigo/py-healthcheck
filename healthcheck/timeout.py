@@ -10,7 +10,8 @@ class TimeoutError(Exception):
     pass
 
 
-def timeout(seconds=2, error_message=os.strerror(errno.ETIME)):
+def timeout(seconds=2, error_message=os.strerror(
+        getattr(errno, 'ETIME', errno.ETIMEDOUT))):
     def decorator(func):
         def _handle_timeout(signum, frame):
             raise TimeoutError(error_message)
