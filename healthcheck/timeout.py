@@ -10,14 +10,8 @@ class TimeoutError(Exception):
     pass
 
 
-try:
-    err_msg = os.strerror(errno.ETIME)
-except AttributeError:
-    # errno.ETIME does not exist on FreeBSD
-    err_msg = "Timer expired"
-
-
-def timeout(seconds=2, error_message=err_msg):
+def timeout(seconds=2, error_message=os.strerror(
+        getattr(errno, 'ETIME', errno.ETIMEDOUT))):
     def decorator(func):
         def _handle_timeout(signum, frame):
             raise TimeoutError(error_message)
