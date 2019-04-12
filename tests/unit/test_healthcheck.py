@@ -9,12 +9,9 @@ from healthcheck import HealthCheck
 class BasicHealthCheckTest(unittest.TestCase):
 
     @staticmethod
-    def check_adition_works():
+    def check_that_works():
         """Check that always return true."""
-        if 1 + 1 == 2:
-            return True, "addition works"
-        else:
-            return False, "the universe is broken"
+        return True, "it works"
 
     @staticmethod
     def check_throws_exception():
@@ -33,58 +30,76 @@ class BasicHealthCheckTest(unittest.TestCase):
         self.assertEqual("failure", jr["status"])
 
     def test_success_check(self):
-        hc = HealthCheck(checkers=[self.check_adition_works])
+        hc = HealthCheck(checkers=[self.check_that_works])
         message, status, headers = hc.run()
         self.assertEqual(200, status)
         jr = json.loads(message)
         self.assertEqual("success", jr["status"])
 
-    def test_custom_section_success_check(self):
-        def custom_section():
-            return "My custom section"
-        hc = HealthCheck(checkers=[self.check_adition_works])
-        hc.add_section("custom_section", custom_section)
+    def test_custom_section_function_success_check(self):
+        hc = HealthCheck(checkers=[self.check_that_works])
+        hc.add_section("custom_section", lambda: "My custom section")
         message, status, headers = hc.run()
         self.assertEqual(200, status)
         jr = json.loads(message)
         self.assertEqual("My custom section", jr["custom_section"])
 
-    def test_custom_section_signature_success_check(self):
-        def custom_section():
-            return "My custom section"
-        hc = HealthCheck(checkers=[self.check_adition_works], custom_section=custom_section)
+    def test_custom_section_signature_function_success_check(self):
+        hc = HealthCheck(checkers=[self.check_that_works], custom_section=lambda: "My custom section")
         message, status, headers = hc.run()
         self.assertEqual(200, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_value_success_check(self):
+        hc = HealthCheck(checkers=[self.check_that_works])
+        hc.add_section("custom_section", "My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(200, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_signature_value_success_check(self):
+        hc = HealthCheck(checkers=[self.check_that_works], custom_section="My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(200, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_function_failing_check(self):
+        hc = HealthCheck(checkers=[self.check_throws_exception])
+        hc.add_section("custom_section", lambda: "My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(500, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_signature_function_failure_check(self):
+        hc = HealthCheck(checkers=[self.check_throws_exception], custom_section=lambda: "My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(500, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_value_failing_check(self):
+        hc = HealthCheck(checkers=[self.check_throws_exception])
+        hc.add_section("custom_section", "My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(500, status)
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
+    def test_custom_section_signature_value_failing_check(self):
+        hc = HealthCheck(checkers=[self.check_throws_exception], custom_section="My custom section")
+        message, status, headers = hc.run()
+        self.assertEqual(500, status)
         jr = json.loads(message)
         self.assertEqual("My custom section", jr["custom_section"])
 
     def test_custom_section_prevent_duplication(self):
-        def broke_section():
-            raise Exception("My broke section")
-        hc = HealthCheck(checkers=[self.check_adition_works], custom_section=broke_section)
-        message, status, headers = hc.run()
-        self.assertEqual(200, status)
-        jr = json.loads(message)
-        self.assertNotIn("custom_section", jr)
-
-    def test_custom_section_failing_check(self):
-        def custom_section():
-            return "My custom section"
-        hc = HealthCheck(checkers=[self.check_throws_exception])
-        hc.add_section("custom_section", custom_section)
-        message, status, headers = hc.run()
-        self.assertEqual(500, status)
-        jr = json.loads(message)
-        self.assertEqual("My custom section", jr["custom_section"])
-
-    def test_custom_section_signature_failure_check(self):
-        def custom_section():
-            return "My custom section"
-        hc = HealthCheck(checkers=[self.check_throws_exception], custom_section=custom_section)
-        message, status, headers = hc.run()
-        self.assertEqual(500, status)
-        jr = json.loads(message)
-        self.assertEqual("My custom section", jr["custom_section"])
+        hc = HealthCheck(checkers=[self.check_that_works], custom_section="My custom section")
+        self.assertRaises(Exception, 'The name "custom_section" is already taken.',
+            hc.add_section, "custom_section", "My custom section")
 
 
 class TimeoutHealthCheckTest(unittest.TestCase):
