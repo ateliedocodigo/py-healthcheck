@@ -99,7 +99,7 @@ class BasicHealthCheckTest(unittest.TestCase):
     def test_custom_section_prevent_duplication(self):
         hc = HealthCheck(checkers=[self.check_that_works], custom_section="My custom section")
         self.assertRaises(Exception, 'The name "custom_section" is already taken.',
-            hc.add_section, "custom_section", "My custom section")
+                          hc.add_section, "custom_section", "My custom section")
 
 
 class TimeoutHealthCheckTest(unittest.TestCase):
