@@ -8,7 +8,9 @@ script:
   - tox
 env:
   - TOXENV=py27
-  - TOXENV=py3
+  - TOXENV=py35
+  - TOXENV=py36
+  - TOXENV=py37
   - TOXENV=flask
   - TOXENV=tornado
 deploy:
