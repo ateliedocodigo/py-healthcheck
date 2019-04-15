@@ -98,6 +98,7 @@ To use with ``Tornado`` you can import the ``TornadoHandler``:
 
     # ou choose where you want to output this information
     health.add_section("application", application_data)
+    health.add_section("version", __version__)
     envdump.add_section("application", application_data)
 
     # Add a tornado handler to expose information

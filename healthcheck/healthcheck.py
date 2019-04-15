@@ -3,11 +3,9 @@
 import json
 import logging
 import socket
-import sys
-import time
-import traceback
 
 import six
+import time
 
 from .timeout import timeout
 
@@ -98,7 +96,7 @@ class HealthCheck(object):
         custom_section = dict()
         for (name, func) in six.iteritems(self.functions):
             try:
-                custom_section[name] = func()
+                custom_section[name] = func() if callable(func) else func
             except Exception:
                 pass
 
@@ -125,9 +123,7 @@ class HealthCheck(object):
                 passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
             else:
                 passed, output = checker()
-        except Exception:
-            traceback.print_exc()
-            e = sys.exc_info()[0]
+        except Exception as e:
             logging.exception(e)
             passed, output = self.exception_handler(checker, e)
 

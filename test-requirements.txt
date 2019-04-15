@@ -1,4 +1,3 @@
-pylint
 flake8
 flask
 tornado
