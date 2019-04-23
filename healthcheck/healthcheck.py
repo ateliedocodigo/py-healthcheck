@@ -7,12 +7,17 @@ import socket
 import six
 import time
 
-from .timeout import timeout
+from .timeout import async_timeout
 
 try:
     from functools import reduce
-except Exception:
+except ImportError:
     pass
+
+try:
+    from multiprocessing.context import TimeoutError as HealthCheckTimeoutError
+except ImportError:  # if python2
+    from multiprocessing import TimeoutError as HealthCheckTimeoutError
 
 
 def basic_exception_handler(_, e):
@@ -120,9 +125,12 @@ class HealthCheck(object):
 
         try:
             if self.error_timeout > 0:
-                passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
+                passed, output = async_timeout(self.error_timeout)(checker)()
             else:
                 passed, output = checker()
+        except HealthCheckTimeoutError:
+            msg = "Timeout error! Took more than {} seconds".format(self.error_timeout)
+            passed, output = self.exception_handler(checker, msg)
         except Exception as e:
             logging.exception(e)
             passed, output = self.exception_handler(checker, e)
