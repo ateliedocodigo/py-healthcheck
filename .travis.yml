@@ -1,16 +1,33 @@
 language: python
-python: 3.5
+matrix:
+  include:
+    - python: 2.7
+      env:
+        - TOXENV=py27
+        - TOXENV=flask
+        - TOXENV=tornado
+    - python: 3.5
+      env:
+        - TOXENV=py3
+        - TOXENV=flask
+        - TOXENV=tornado
+    - python: 3.6
+      env:
+        - TOXENV=py3
+        - TOXENV=flask
+        - TOXENV=tornado
+    - python: 3.7 # https://docs.travis-ci.com/user/languages/python/#running-python-tests-on-multiple-operating-systems
+      dist: xenial # required for Python >= 3.7
+      env:
+        - TOXENV=py3
+        - TOXENV=flask
+        - TOXENV=tornado
 before_install:
   - pip install --upgrade pip
 install:
   - pip install tox
 script:
   - tox
-env:
-  - TOXENV=py27
-  - TOXENV=py3
-  - TOXENV=flask
-  - TOXENV=tornado
 deploy:
   provider: pypi
 #  server: https://test.pypi.org/legacy/
