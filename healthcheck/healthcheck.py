@@ -9,6 +9,8 @@ import time
 
 from .timeout import timeout
 
+logger = logging.getLogger(__name__)
+
 try:
     from functools import reduce
 except Exception:
@@ -124,7 +126,7 @@ class HealthCheck(object):
             else:
                 passed, output = checker()
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
             passed, output = self.exception_handler(checker, e)
 
         end_time = time.time()
@@ -134,7 +136,7 @@ class HealthCheck(object):
 
         if not passed:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
-            logging.error(msg)
+            logger.error(msg)
 
         timestamp = time.time()
         if passed:
