@@ -32,6 +32,7 @@ matrix:
       dist: xenial # required for Python >= 3.7
       env:
         - TOXENV=py3
+        - DEPLOY_TO_PYPI=1
     - python: 3.7
       dist: xenial
       env:
@@ -55,5 +56,5 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    condition: $TOXENV = py3
+    condition: $DEPLOY_TO_PYPI = 1
 #    branch: pypitest
