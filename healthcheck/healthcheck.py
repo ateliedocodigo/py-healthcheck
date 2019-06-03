@@ -85,9 +85,10 @@ class HealthCheck(object):
     def add_check(self, func):
         self.checkers.append(func)
 
-    def run(self):
+    def run(self, check=None):
         results = []
-        for checker in self.checkers:
+        filtered = [c for c in self.checkers if check is None or c.__name__ == check]
+        for checker in filtered:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
                 result = self.cache[checker]
             else:
