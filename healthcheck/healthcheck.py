@@ -3,11 +3,10 @@
 import json
 import logging
 import socket
+import threading
 
 import six
 import time
-
-from .timeout import timeout
 
 logger = logging.getLogger(__name__)
 
@@ -47,13 +46,80 @@ def check_reduce(passed, result):
     return passed and result.get('passed')
 
 
+class _ThreadedChecker(threading.Thread):
+    def __init__(self,
+                 checker,
+                 success_ttl,
+                 failed_ttl,
+                 exception_handler):
+        threading.Thread.__init__(self, name='checker-' + checker.__name__)
+        self.result = {'checker': checker.__name__,
+                       'output': None,
+                       'passed': None,
+                       'timestamp': None,
+                       'expires': None,
+                       'response_time': None}
+        self.checker = checker
+        self.success_ttl = success_ttl
+        self.failed_ttl = failed_ttl
+        self.exception_handler = exception_handler
+
+    def run(self):
+        start_time = time.time()
+
+        try:
+            passed, output = self.checker()
+        except Exception as e:
+            logger.exception(e)
+            passed, output = self.exception_handler(self.checker, e)
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        # Reduce to 6 decimal points to have consistency with timestamp
+        elapsed_time = float('{:.6f}'.format(elapsed_time))
+
+        if not passed:
+            msg = 'Health check "{}" failed with output "{}"'.format(self.checker.__name__, output)
+            logger.error(msg)
+
+        timestamp = time.time()
+        if passed:
+            expires = timestamp + self.success_ttl
+        else:
+            expires = timestamp + self.failed_ttl
+
+        self.result['output'] = output
+        self.result['passed'] = passed
+        self.result['timestamp'] = timestamp
+        self.result['expires'] = expires
+        self.result['response_time'] = elapsed_time
+        return
+
+    def get_result(self):
+        return self.result
+
+    def get_timeout_result(self, timeout):
+        self.result['passed'] = False
+        self.result['output'] = 'Timeout'
+        self.result['timestamp'] = time.time()
+        self.result['expires'] = time.time() + self.failed_ttl
+        self.result['response_time'] = timeout
+        return self.get_result()
+
+
 class HealthCheck(object):
-    def __init__(self, success_status=200,
-                 success_headers=None, success_handler=json_success_handler,
-                 success_ttl=27, failed_status=500, failed_headers=None,
-                 failed_handler=json_failed_handler, failed_ttl=9,
-                 error_timeout=0,
-                 exception_handler=basic_exception_handler, checkers=None,
+    def __init__(self,
+                 success_status=200,
+                 success_headers=None,
+                 success_handler=json_success_handler,
+                 success_ttl=27,
+                 failed_status=500,
+                 failed_headers=None,
+                 failed_handler=json_failed_handler,
+                 failed_ttl=9,
+                 error_timeout=None,
+                 exception_handler=basic_exception_handler,
+                 checkers=None,
                  **kwargs):
         self.cache = dict()
 
@@ -86,15 +152,31 @@ class HealthCheck(object):
         self.checkers.append(func)
 
     def run(self, check=None):
-        results = []
         filtered = [c for c in self.checkers if check is None or c.__name__ == check]
+        threads = []
+        results = []
         for checker in filtered:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
                 result = self.cache[checker]
+                results.append(result)
             else:
-                result = self.run_check(checker)
-                self.cache[checker] = result
-            results.append(result)
+                threaded_checker = _ThreadedChecker(checker,
+                                                    self.success_ttl,
+                                                    self.failed_ttl,
+                                                    self.exception_handler)
+                threaded_checker.start()
+                threads.append(threaded_checker)
+
+        for thread in threads:
+            thread.join(timeout=self.error_timeout
+                        if self.error_timeout
+                        else None)
+
+        for thread in threads:
+            checker_result = thread.get_result()
+            if thread.is_alive():       # check failed due call timeout
+                checker_result = thread.get_timeout_result(self.error_timeout)
+            results.append(checker_result)
 
         custom_section = dict()
         for (name, func) in six.iteritems(self.functions):
@@ -117,38 +199,3 @@ class HealthCheck(object):
                 message = self.failed_handler(results, **custom_section)
 
             return message, self.failed_status, self.failed_headers
-
-    def run_check(self, checker):
-        start_time = time.time()
-
-        try:
-            if self.error_timeout > 0:
-                passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
-            else:
-                passed, output = checker()
-        except Exception as e:
-            logger.exception(e)
-            passed, output = self.exception_handler(checker, e)
-
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        # Reduce to 6 decimal points to have consistency with timestamp
-        elapsed_time = float('{:.6f}'.format(elapsed_time))
-
-        if not passed:
-            msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
-            logger.error(msg)
-
-        timestamp = time.time()
-        if passed:
-            expires = timestamp + self.success_ttl
-        else:
-            expires = timestamp + self.failed_ttl
-
-        result = {'checker': checker.__name__,
-                  'output': output,
-                  'passed': passed,
-                  'timestamp': timestamp,
-                  'expires': expires,
-                  'response_time': elapsed_time}
-        return result

@@ -10,6 +10,11 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
+def read_reqs():
+    with open('requirements.txt') as origin:
+        return origin.readlines()
+
+
 setup(
     name="py-healthcheck",
     version=__version__,
@@ -24,7 +29,7 @@ setup(
     include_package_data=True,
     license="MIT",
     platforms="any",
-    install_requires=["six"],
+    install_requires=read_reqs(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
