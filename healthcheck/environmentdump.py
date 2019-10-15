@@ -24,8 +24,12 @@ class EnvironmentDump(object):
 
         # adds custom_sections on signature
         for k, v in kwargs.items():
-            for name, func in v.items():
-                self.add_section(name, func)
+            if hasattr(v, '__call__'):
+                self.add_section(k, v)
+
+            if isinstance(v, (dict)):
+                for name, func in v.items():
+                    self.add_section(name, func)
 
     def add_section(self, name, func):
         if name in self.functions:
