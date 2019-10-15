@@ -32,6 +32,21 @@ class BasicEnvironmentDumpTest(unittest.TestCase):
         jr = json.loads(message)
         self.assertEqual("My custom section", jr["custom_section"])
 
+    def test_custom_section_multiple(self):
+        def custom_section():
+            return "My custom section"
+
+        sections = {
+            'custom_section': custom_section,
+        }
+
+        ed = EnvironmentDump(sections=sections)
+
+        message, status, headers = ed.run()
+
+        jr = json.loads(message)
+        self.assertEqual("My custom section", jr["custom_section"])
+
 
 if __name__ == '__main__':
     unittest.main()
