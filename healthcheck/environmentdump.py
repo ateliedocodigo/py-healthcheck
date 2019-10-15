@@ -22,8 +22,10 @@ class EnvironmentDump(object):
         if include_process:
             self.functions['process'] = self.get_process
 
-        # ads custom_sections on signature
-        [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
+        # adds custom_sections on signature
+        for k, v in kwargs.items():
+            for name, func in v.items():
+                self.add_section(name, func)
 
     def add_section(self, name, func):
         if name in self.functions:
