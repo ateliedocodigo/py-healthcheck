@@ -278,6 +278,12 @@ your own. Here's an example of how this would be used:
     envdump = EnvironmentDump()
     envdump.add_section("application", application_data)
 
+    # Alternative - Add sections upon initialization
+    sections = {
+        'application': application_data,
+    }
+    envdump = EnvironmentDump(sections=sections)
+
 
 Credits
 -------
