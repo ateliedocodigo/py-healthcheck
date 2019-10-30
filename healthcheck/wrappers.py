@@ -46,7 +46,7 @@ def add_section_to(our_class, name):
 
         if not isinstance(our_class, (HealthCheck, EnvironmentDump)):
             raise Exception(
-                f"{0} given, {1} or {2} expected.".format(
+                "{0} given, {1} or {2} expected.".format(
                     our_class, HealthCheck, EnvironmentDump
                 )
             )
