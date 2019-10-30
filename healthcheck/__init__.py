@@ -13,3 +13,4 @@ except ImportError:
 
 from .environmentdump import EnvironmentDump  # noqa
 from .healthcheck import HealthCheck  # noqa
+from .wrappers import add_check_to, add_section_to  # noqa
