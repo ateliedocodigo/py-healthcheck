@@ -16,7 +16,7 @@ def add_check_to(health_check):
 
         if not isinstance(health_check, HealthCheck):
             raise Exception(
-                "{0} given, " "{1} expected.".format(health_check, HealthCheck)
+                "{0} given, {1} expected.".format(health_check, HealthCheck)
             )
 
         health_check.add_check(func)
