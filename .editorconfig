@@ -1,6 +1,6 @@
 root = true
 
-[*.{cfg,conf,ini,json,py,yml}]
+[*]
 charset = utf-8
 trim_trailing_whitespace = true
 indent_style = space
