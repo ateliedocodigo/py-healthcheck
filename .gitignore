@@ -27,6 +27,7 @@ venv
 pip-log.txt
 
 # Unit test / coverage reports
+htmlcov/
 .coverage
 .tox
 nosetests.xml
@@ -40,3 +41,5 @@ nosetests.xml
 .pydevproject
 
 .idea
+
+.DS_Store
