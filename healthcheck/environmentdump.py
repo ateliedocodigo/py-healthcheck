@@ -82,7 +82,4 @@ class EnvironmentDump(object):
                 'cwd': os.getcwd(),
                 'user': self.get_login(),
                 'pid': os.getpid(),
-                'environ': self.safe_dump(os.environ)}
-
-    def safe_dump(self, dictionary):
-        return json.dumps(safe_dict(dictionary), default=str)
+                'environ': safe_dict(os.environ)}
