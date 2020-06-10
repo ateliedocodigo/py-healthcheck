@@ -4,10 +4,14 @@ import json
 import logging
 import socket
 import time
-from collections import Iterable
 from typing import AnyStr, Union
 
 import six
+
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 from .timeout import timeout
 
@@ -49,7 +53,7 @@ def check_reduce(passed, result):
     return passed and result.get('passed')
 
 
-class HealthCheckerMonitor(object):
+class HealthCheckMonitor(object):
     checkers = {}
 
     @classmethod
@@ -60,8 +64,6 @@ class HealthCheckerMonitor(object):
     @classmethod
     def register(cls, checker):
         # type: (Union[Checker, callable]) -> None
-        # cls.checkers[checker.name] = checker
-        # cls.checkers[checker.__qualname__] = checker
         if isinstance(checker, Checker):
             cls.checkers[checker.name] = checker
             return
@@ -96,7 +98,7 @@ class Checker:
             self._name = function.__name__
             # self._name = function.__qualname__
 
-        HealthCheckerMonitor.register(self)
+        HealthCheckMonitor.register(self)
 
         @wraps(function)
         def wrapper(*args, **kwargs):
@@ -132,7 +134,6 @@ class HealthCheck(object):
 
         self.exception_handler = exception_handler
 
-        HealthCheckerMonitor.unregister_all()
         if checkers:
             [self.add_check(c) for c in checkers]
 
@@ -146,11 +147,11 @@ class HealthCheck(object):
         self.functions[name] = func
 
     def add_check(self, func):
-        HealthCheckerMonitor.register(func)
+        HealthCheckMonitor.register(func)
 
     def run(self, check=None):
         results = []
-        filtered = HealthCheckerMonitor.get_checkers(check)
+        filtered = HealthCheckMonitor.get_checkers(check)
         for checker in filtered:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
                 result = self.cache[checker]

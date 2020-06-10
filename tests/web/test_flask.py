@@ -4,12 +4,14 @@ import unittest
 
 import flask
 
-from healthcheck import HealthCheck, EnvironmentDump
+from healthcheck import EnvironmentDump, HealthCheck, HealthCheckMonitor
 
 
 class BasicHealthCheckTest(unittest.TestCase):
 
     def setUp(self):
+        HealthCheckMonitor.unregister_all()
+
         self.path = '/h'
         self.app = flask.Flask(__name__)
         self.hc = self._hc()
@@ -26,14 +28,14 @@ class BasicHealthCheckTest(unittest.TestCase):
 
     def test_failing_check(self):
         def fail_check():
-            return False, "FAIL"
+            return False, 'FAIL'
 
         self.hc.add_check(fail_check)
         response = self.client.get(self.path)
         self.assertEqual(500, response.status_code)
 
         jr = flask.json.loads(response.data)
-        self.assertEqual("failure", jr["status"])
+        self.assertEqual('failure', jr['status'])
 
 
 class BasicEnvironmentDumpTest(unittest.TestCase):
@@ -51,15 +53,15 @@ class BasicEnvironmentDumpTest(unittest.TestCase):
 
     def test_basic_check(self):
         def test_ok():
-            return "OK"
+            return 'OK'
 
-        self.hc.add_section("test_func", test_ok)
-        self.hc.add_section("config", self.app.config)
+        self.hc.add_section('test_func', test_ok)
+        self.hc.add_section('config', self.app.config)
 
         response = self.client.get(self.path)
         self.assertEqual(200, response.status_code)
         jr = flask.json.loads(response.data)
-        self.assertEqual("OK", jr["test_func"])
+        self.assertEqual('OK', jr['test_func'])
 
 
 if __name__ == '__main__':
