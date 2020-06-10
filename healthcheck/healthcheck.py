@@ -3,16 +3,18 @@
 import json
 import logging
 import socket
+import time
+from collections import Iterable
+from typing import AnyStr, Union
 
 import six
-import time
 
 from .timeout import timeout
 
 logger = logging.getLogger(__name__)
 
 try:
-    from functools import reduce
+    from functools import reduce, wraps
 except Exception:
     pass
 
@@ -47,6 +49,65 @@ def check_reduce(passed, result):
     return passed and result.get('passed')
 
 
+class HealthCheckerMonitor(object):
+    checkers = {}
+
+    @classmethod
+    def unregister_all(cls):
+        # type: () -> None
+        cls.checkers = {}
+
+    @classmethod
+    def register(cls, checker):
+        # type: (Union[Checker, callable]) -> None
+        # cls.checkers[checker.name] = checker
+        # cls.checkers[checker.__qualname__] = checker
+        if isinstance(checker, Checker):
+            cls.checkers[checker.name] = checker
+            return
+        cls.checkers[checker.__name__] = checker
+
+    @classmethod
+    def get_checkers(cls, name=None):
+        # type: (AnyStr) -> Iterable[Checker]
+        if name:
+            return list(filter(None, [cls.get(name)]))
+        return cls.checkers.values()
+
+    @classmethod
+    def get(cls, name):
+        # type: (AnyStr) -> Checker
+        return cls.checkers.get(name)
+
+
+class Checker:
+    def __init__(self, name=None):
+        self._name = name
+
+    def __call__(self, wrapped):
+        return self.decorate(wrapped)
+
+    @property
+    def name(self):
+        return self._name
+
+    def decorate(self, function):
+        if self._name is None:
+            self._name = function.__name__
+            # self._name = function.__qualname__
+
+        HealthCheckerMonitor.register(self)
+
+        @wraps(function)
+        def wrapper(*args, **kwargs):
+            return self.call(function, *args, **kwargs)
+
+        return wrapper
+
+    def call(self, func, *args, **kwargs):
+        return func(*args, **kwargs)
+
+
 class HealthCheck(object):
     def __init__(self, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
@@ -71,7 +132,9 @@ class HealthCheck(object):
 
         self.exception_handler = exception_handler
 
-        self.checkers = checkers or []
+        HealthCheckerMonitor.unregister_all()
+        if checkers:
+            [self.add_check(c) for c in checkers]
 
         self.functions = dict()
         # ads custom_sections on signature
@@ -83,11 +146,11 @@ class HealthCheck(object):
         self.functions[name] = func
 
     def add_check(self, func):
-        self.checkers.append(func)
+        HealthCheckerMonitor.register(func)
 
     def run(self, check=None):
         results = []
-        filtered = [c for c in self.checkers if check is None or c.__name__ == check]
+        filtered = HealthCheckerMonitor.get_checkers(check)
         for checker in filtered:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
                 result = self.cache[checker]
@@ -106,13 +169,13 @@ class HealthCheck(object):
         passed = reduce(check_reduce, results, True)
 
         if passed:
-            message = "OK"
+            message = 'OK'
             if self.success_handler:
                 message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
         else:
-            message = "NOT OK"
+            message = 'NOT OK'
             if self.failed_handler:
                 message = self.failed_handler(results, **custom_section)
 
@@ -123,7 +186,7 @@ class HealthCheck(object):
 
         try:
             if self.error_timeout > 0:
-                passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
+                passed, output = timeout(self.error_timeout, 'Timeout error!')(checker)()
             else:
                 passed, output = checker()
         except Exception as e:
@@ -152,3 +215,12 @@ class HealthCheck(object):
                   'expires': expires,
                   'response_time': elapsed_time}
         return result
+
+
+def checker(name=None):
+    # if the decorator is used without parameters, the
+    # wrapped function is provided as first argument
+    if callable(name):
+        return Checker().decorate(name)
+
+    return Checker(name=name)
