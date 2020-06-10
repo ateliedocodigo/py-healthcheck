@@ -4,6 +4,7 @@ import json
 import logging
 import socket
 import time
+from functools import reduce, wraps
 from typing import AnyStr, Union
 
 import six
@@ -16,11 +17,6 @@ except ImportError:
 from .timeout import timeout
 
 logger = logging.getLogger(__name__)
-
-try:
-    from functools import reduce, wraps
-except Exception:
-    pass
 
 
 def basic_exception_handler(_, e):
