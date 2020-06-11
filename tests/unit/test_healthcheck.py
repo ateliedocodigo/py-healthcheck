@@ -106,6 +106,7 @@ class BasicHealthCheckTest(unittest.TestCase):
                           hc.add_section, 'custom_section', 'My custom section')
 
 
+@unittest.skip
 class TimeoutHealthCheckTest(unittest.TestCase):
 
     def setUp(self):
