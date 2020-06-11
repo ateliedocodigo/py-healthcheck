@@ -22,11 +22,11 @@ class HealthCheckCheckerDecoratorTest(unittest.TestCase):
         checker(foo)
         checker_mock.assert_called_once_with(foo)
 
-    # @patch.object(Checker, '__init__')
-    # def test_should_decorate_with_args(self, checker_mock):
-    #     checker_mock.return_value = None
-    #     checker(name='foobar')
-    #     checker_mock.assert_called_once_with(name='foobar')
+    @patch.object(Checker, '__init__')
+    def test_should_decorate_with_args(self, checker_mock):
+        checker_mock.return_value = None
+        checker(name='foobar')
+        checker_mock.assert_called_once_with(name='foobar')
 
     def test_should_call_decorated_function_without_args(self):
         foo = Mock(__name__='bar', return_value=(True, 'It works!'))
