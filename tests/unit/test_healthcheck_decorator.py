@@ -69,16 +69,37 @@ class HealthCheckCheckerDecoratorTest(unittest.TestCase):
         self.assertEqual(1, bar.call_count)
 
     def test_should_call_decorated_method_without_args(self):
-        foo = Mock(__name__='baraleo', return_value=(True, 'It works!'))
+        foo = Mock(__name__='bar', return_value=(True, 'It works!'))
 
         class Foo:
-            @checker(name='baraleo')
+            def __init__(self):
+                checker(self.foo_decorated)
+
             def foo_decorated(self):
                 return foo()
 
-        Foo().foo_decorated()
+        Foo()
 
-        message, status, headers = HealthCheck().run('baraleo')
+        message, status, headers = HealthCheck().run()
+        self.assertEqual(200, status)
+
+        if hasattr(foo, 'assert_called_once'):
+            foo.assert_called_once()
+        self.assertEqual(1, foo.call_count)
+
+    def test_should_call_decorated_method_with_args(self):
+        foo = Mock(__name__='bar', return_value=(True, 'It works!'))
+
+        class Foo:
+            def __init__(self):
+                checker('foo')(self.foo_decorated)
+
+            def foo_decorated(self):
+                return foo()
+
+        Foo()
+
+        message, status, headers = HealthCheck().run()
         self.assertEqual(200, status)
 
         if hasattr(foo, 'assert_called_once'):
