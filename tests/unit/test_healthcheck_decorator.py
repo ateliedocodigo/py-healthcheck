@@ -68,6 +68,24 @@ class HealthCheckCheckerDecoratorTest(unittest.TestCase):
             bar.assert_called_once()
         self.assertEqual(1, bar.call_count)
 
+    def todo_should_call_decorated_method_without_args(self):
+        # TODO: Fix decorate method raising missing 1 required positional argument: 'self'
+        foo = Mock(__name__='bar', return_value=(True, 'It works!'))
+
+        class Foo:
+            @checker
+            def foo_decorated(self):
+                return foo()
+
+        Foo()
+
+        message, status, headers = HealthCheck().run()
+        self.assertEqual(200, status)
+
+        if hasattr(foo, 'assert_called_once'):
+            foo.assert_called_once()
+        self.assertEqual(1, foo.call_count)
+
     def test_should_call_decorated_method_without_args(self):
         foo = Mock(__name__='bar', return_value=(True, 'It works!'))
 
