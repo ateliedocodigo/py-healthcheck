@@ -4,13 +4,13 @@ import unittest
 
 import flask
 
-from healthcheck import EnvironmentDump, HealthCheck, HealthCheckMonitor
+from healthcheck import EnvironmentDump, HealthCheck
 
 
 class BasicHealthCheckTest(unittest.TestCase):
 
     def setUp(self):
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
         self.path = '/h'
         self.app = flask.Flask(__name__)

@@ -4,13 +4,12 @@ import json
 import unittest
 
 from healthcheck import HealthCheck
-from healthcheck.healthcheck import HealthCheckMonitor
 
 
 class BasicHealthCheckTest(unittest.TestCase):
 
     def setUp(self):
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
     @staticmethod
     def check_that_works():
@@ -110,7 +109,7 @@ class BasicHealthCheckTest(unittest.TestCase):
 class TimeoutHealthCheckTest(unittest.TestCase):
 
     def setUp(self):
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
     def test_default_timeout_should_success_check(self):
         def timeout_check():

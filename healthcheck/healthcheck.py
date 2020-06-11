@@ -49,35 +49,6 @@ def check_reduce(passed, result):
     return passed and result.get('passed')
 
 
-class HealthCheckMonitor(object):
-    checkers = {}
-
-    @classmethod
-    def unregister_all(cls):
-        # type: () -> None
-        cls.checkers = {}
-
-    @classmethod
-    def register(cls, checker):
-        # type: (Union[Checker, callable]) -> None
-        if isinstance(checker, Checker):
-            cls.checkers[checker.name] = checker
-            return
-        cls.checkers[checker.__name__] = checker
-
-    @classmethod
-    def get_checkers(cls, name=None):
-        # type: (AnyStr) -> Iterable[Checker]
-        if name:
-            return list(filter(None, [cls.get(name)]))
-        return cls.checkers.values()
-
-    @classmethod
-    def get(cls, name):
-        # type: (AnyStr) -> Checker
-        return cls.checkers.get(name)
-
-
 class Checker:
     def __init__(self, name=None):
         self._name = name
@@ -94,7 +65,7 @@ class Checker:
             self._name = function.__name__
             # self._name = function.__qualname__
 
-        HealthCheckMonitor.register(self)
+        HealthCheck.register(self)
 
         @wraps(function)
         def wrapper(*args, **kwargs):
@@ -113,6 +84,8 @@ class Checker:
 
 
 class HealthCheck(object):
+    checkers = {}
+
     def __init__(self, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
@@ -152,11 +125,11 @@ class HealthCheck(object):
         if not isinstance(func, Checker):
             Checker().decorate(func)
             return
-        HealthCheckMonitor.register(func)
+        HealthCheck.register(func)
 
     def run(self, check=None):
         results = []
-        filtered = HealthCheckMonitor.get_checkers(check)
+        filtered = HealthCheck.get_checkers(check)
         for checker in filtered:
             if checker in self.cache and self.cache[checker].get('expires') >= time.time():
                 result = self.cache[checker]
@@ -220,3 +193,28 @@ class HealthCheck(object):
                   'expires': expires,
                   'response_time': elapsed_time}
         return result
+
+    @classmethod
+    def unregister_all(cls):
+        # type: () -> None
+        cls.checkers = {}
+
+    @classmethod
+    def register(cls, checker):
+        # type: (Union[Checker, callable]) -> None
+        if isinstance(checker, Checker):
+            cls.checkers[checker.name] = checker
+            return
+        cls.checkers[checker.__name__] = checker
+
+    @classmethod
+    def get_checkers(cls, name=None):
+        # type: (AnyStr) -> Iterable[Checker]
+        if name:
+            return list(filter(None, [cls.get(name)]))
+        return cls.checkers.values()
+
+    @classmethod
+    def get(cls, name):
+        # type: (AnyStr) -> Checker
+        return cls.checkers.get(name)

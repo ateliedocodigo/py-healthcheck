@@ -5,14 +5,14 @@ try:
 except ImportError:
     from mock import patch, Mock
 
-from healthcheck.healthcheck import Checker, HealthCheckMonitor, HealthCheck
+from healthcheck.healthcheck import Checker, HealthCheck
 from healthcheck.wrappers import checker
 
 
 class HealthCheckCheckerDecoratorTest(unittest.TestCase):
 
     def setUp(self):
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
     @patch.object(Checker, 'decorate')
     def test_should_decorate_without_args(self, checker_mock):

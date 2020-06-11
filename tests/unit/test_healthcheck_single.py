@@ -3,13 +3,13 @@
 import json
 import unittest
 
-from healthcheck import HealthCheck, HealthCheckMonitor
+from healthcheck import HealthCheck
 
 
 class HealthCheckSingleRunTest(unittest.TestCase):
 
     def setUp(self):
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
     @staticmethod
     def check_that_works():

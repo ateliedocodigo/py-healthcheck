@@ -7,7 +7,7 @@ import tornado.testing
 import tornado.web
 from tornado.testing import AsyncHTTPTestCase
 
-from healthcheck import EnvironmentDump, HealthCheck, HealthCheckMonitor, TornadoHandler
+from healthcheck import EnvironmentDump, HealthCheck, TornadoHandler
 
 
 class BasicHealthCheckTest(AsyncHTTPTestCase):
@@ -16,7 +16,7 @@ class BasicHealthCheckTest(AsyncHTTPTestCase):
 
     def setUp(self):
         super(BasicHealthCheckTest, self).setUp()
-        HealthCheckMonitor.unregister_all()
+        HealthCheck.unregister_all()
 
         self.path = '/h'
         self.hc = self._hc()
