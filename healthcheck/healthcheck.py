@@ -82,8 +82,8 @@ class Checker:
     def __init__(self, name=None):
         self._name = name
 
-    def __call__(self, wrapped):
-        return self.decorate(wrapped)
+    def __call__(self, *args, **kwargs):
+        return self.call(*args, **kwargs)
 
     @property
     def name(self):
@@ -98,11 +98,15 @@ class Checker:
 
         @wraps(function)
         def wrapper(*args, **kwargs):
-            return self.call(function, *args, **kwargs)
+            return self._call(function, *args, **kwargs)
 
+        self._wrapped = wrapper
         return wrapper
 
-    def call(self, func, *args, **kwargs):
+    def call(self, *args, **kwargs):
+        return self._wrapped(*args, **kwargs)
+
+    def _call(self, func, *args, **kwargs):
         return func(*args, **kwargs)
 
 
@@ -143,6 +147,9 @@ class HealthCheck(object):
         self.functions[name] = func
 
     def add_check(self, func):
+        if not isinstance(func, Checker):
+            Checker().decorate(func)
+            return
         HealthCheckMonitor.register(func)
 
     def run(self, check=None):
@@ -196,8 +203,7 @@ class HealthCheck(object):
         elapsed_time = float('{:.6f}'.format(elapsed_time))
 
         if not passed:
-            msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
-            logger.error(msg)
+            logger.error('Health check "%s" failed with output "%s"', checker.name, output)
 
         timestamp = time.time()
         if passed:
@@ -205,7 +211,7 @@ class HealthCheck(object):
         else:
             expires = timestamp + self.failed_ttl
 
-        result = {'checker': checker.__name__,
+        result = {'checker': checker.name,
                   'output': output,
                   'passed': passed,
                   'timestamp': timestamp,
@@ -220,4 +226,4 @@ def checker(name=None):
     if callable(name):
         return Checker().decorate(name)
 
-    return Checker(name=name)
+    return Checker(name=name).decorate
