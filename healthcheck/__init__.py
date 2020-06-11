@@ -14,4 +14,4 @@ except ImportError:
 from .environmentdump import EnvironmentDump  # noqa
 from .healthcheck import HealthCheck  # noqa
 from .healthcheck import HealthCheckMonitor  # noqa
-from .healthcheck import checker  # noqa
+from .wrappers import checker  # noqa

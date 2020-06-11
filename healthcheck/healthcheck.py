@@ -98,6 +98,8 @@ class Checker:
 
         @wraps(function)
         def wrapper(*args, **kwargs):
+            if self.name == 'baraleo':
+                print('')
             return self._call(function, *args, **kwargs)
 
         self._wrapped = wrapper
@@ -218,12 +220,3 @@ class HealthCheck(object):
                   'expires': expires,
                   'response_time': elapsed_time}
         return result
-
-
-def checker(name=None):
-    # if the decorator is used without parameters, the
-    # wrapped function is provided as first argument
-    if callable(name):
-        return Checker().decorate(name)
-
-    return Checker(name=name).decorate
