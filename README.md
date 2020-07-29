@@ -3,6 +3,7 @@ Healthcheck
 
 [![image](https://github.com/ateliedocodigo/py-healthcheck/raw/develop/py-healthcheck.jpg)](https://pypi.python.org/pypi/py-healthcheck)
 [![PyPI version](https://badge.fury.io/py/py-healthcheck.svg)](https://badge.fury.io/py/py-healthcheck)
+[![Documentation Status](https://readthedocs.org/projects/py-healthcheck/badge/?version=latest)](https://py-healthcheck.readthedocs.io/en/latest/?badge=latest)
 [![Downloads](https://pepy.tech/badge/py-healthcheck)](https://pepy.tech/project/py-healthcheck)
 [![Requirements Status](https://requires.io/github/ateliedocodigo/py-healthcheck/requirements.svg?branch=develop)](https://requires.io/github/ateliedocodigo/py-healthcheck/requirements/?branch=develop)
 [![Build Status](https://travis-ci.org/ateliedocodigo/py-healthcheck.svg?branch=develop)](https://travis-ci.org/ateliedocodigo/py-healthcheck)
