@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = src
+omit = .tox/*,*test_*
+
+[report]
+show_missing = True

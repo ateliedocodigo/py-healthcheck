@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-
 import json
 import os
 import platform
+import sys
+
 import six
+
+from .security import safe_dict
 
 
 class EnvironmentDump(object):
@@ -80,18 +82,4 @@ class EnvironmentDump(object):
                 'cwd': os.getcwd(),
                 'user': self.get_login(),
                 'pid': os.getpid(),
-                'environ': self.safe_dump(os.environ)}
-
-    def safe_dump(self, dictionary):
-        result = {}
-        for key in dictionary.keys():
-            if 'key' in key.lower() or 'token' in key.lower() or 'pass' in key.lower():
-                # Try to avoid listing passwords and access tokens or keys in the output
-                result[key] = "********"
-            else:
-                try:
-                    json.dumps(dictionary[key], default=str)
-                    result[key] = dictionary[key]
-                except TypeError:
-                    pass
-        return result
+                'environ': safe_dict(os.environ)}

@@ -2,3 +2,5 @@
 flake8
 flask
 tornado
+ddt<2
+pytest-cov<3
