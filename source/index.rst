@@ -8,6 +8,7 @@ Welcome to Healthcheck's documentation!
    api
    flask
    tornado
+   changelog
 
 Indices and tables
 ==================
