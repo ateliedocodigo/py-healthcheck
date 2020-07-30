@@ -1,7 +1,7 @@
 Healthcheck
 ===========
 
-[![image](https://github.com/ateliedocodigo/py-healthcheck/raw/develop/py-healthcheck.jpg)](https://pypi.python.org/pypi/py-healthcheck)
+[![image](https://github.com/ateliedocodigo/py-healthcheck/raw/develop/source/_static/py-healthcheck.jpg)](https://pypi.python.org/pypi/py-healthcheck)
 [![PyPI version](https://badge.fury.io/py/py-healthcheck.svg)](https://badge.fury.io/py/py-healthcheck)
 [![Documentation Status](https://readthedocs.org/projects/py-healthcheck/badge/?version=latest)](https://py-healthcheck.readthedocs.io/en/latest/?badge=latest)
 [![Downloads](https://pepy.tech/badge/py-healthcheck)](https://pepy.tech/project/py-healthcheck)
@@ -155,7 +155,7 @@ str). The boolean is whether or not the check passed. The message is any
 string or output that should be rendered for this check. Useful for
 error messages/debugging.
 
-``` {.sourceCode .python}
+```python
 # add check functions
 def addition_works():
     if 1 + 1 == 2:

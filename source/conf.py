@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Healthcheck'
-copyright = '2020, Ateliê do Código'
+copyright = '2017, Ateliê do Código'
 author = 'Ateliê do Código'
 
 # The full version, including alpha/beta/rc tags
@@ -33,6 +33,7 @@ release = '1.10.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
     'm2r2',
 ]
 
