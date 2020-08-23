@@ -1,0 +1,209 @@
+openapi: 3.0.1
+info:
+  title: Health Check And Environment Dump
+  version: 0.0.1
+  description: |
+    This OpenAPI Specification document contains
+    the Healthcheck API. Healthcheck is
+    built using py-healthcheck package
+    from PyPi.
+  contact:
+    name: Ateliê do Código
+    url: https://github.com/ateliedocodigo/py-healthcheck
+  license:
+    name: The MIT License (MIT)
+paths:
+  /healthcheck:
+    get:
+      summary: |
+        Health check for Python Flask or Tornade app.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example: |
+                {
+                  "hostname": "d122bb054e3d",
+                  "status": "success",
+                  "timestamp": 1598022539.1783307,
+                  "results": [
+                    {
+                      "checker": "check_is_up",
+                      "output": "UP",
+                      "passed": true,
+                      "timestamp": 1598022539.1783178,
+                      "expires": 1598022566.1783178
+                    }
+                  ]
+                }
+  /environment:
+    get:
+      summary: |
+        Environment dump for Python Flask or Tornado app.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvironmentResponse'
+              example: |
+                {
+                  "os": {
+                    "platform": "linux",
+                  },
+                  "python": {
+                    "version": "3.6.9 (default, Jun  9 2020, 15:31:15) \n[GCC 7.5.0]",
+                    "executable": "/usr/bin/python3",
+                    "pythonpath": [
+                      "/usr/lib/python3",
+                    ],
+                    "version_info": {
+                      "major": 3,
+                      "minor": 6,
+                      "micro": 9,
+                      "releaselevel": "final",
+                      "serial": 0
+                    }
+                  },
+                  "process": {
+                    "argv": [
+                      "/home/scripts/run-server.py"
+                    ],
+                    "cwd": "/home/scripts",
+                    "user": "scripts",
+                    "pid": 24650,
+                    "environ": {
+                      "TERM": "tmux-256color",
+                      "SHELL": "/bin/bash",
+                    }
+                  },
+                }
+components:
+  schemas:
+    HealthResponse:
+      description: |
+        A system healthcheck response as defined originally by Runscope.
+        Not entirely compatible with MicroProfile Healthcheck protocol definition.
+      type: object
+      properties:
+        hostname:
+          description: Name of host server.
+          type: string
+        status:
+          description: Verbal description of status.
+          type: string
+          pattern: ^(success|failure)$
+          example: success
+        timestamp:
+          description: A timestamp.
+          type: string
+        results:
+          description: List of Result objects. Should contain at least one.
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthResults'
+      required:
+        - status
+        - results
+      example:
+        {
+          "hostname": "d122bb054e3d",
+          "status": "success",
+          "timestamp": 1598022539.1783307,
+          "results": [
+            {
+              "checker": "check_is_up",
+              "output": "UP",
+              "passed": true,
+              "timestamp": 1598022539.1783178,
+              "expires": 1598022566.1783178
+            }
+          ]
+        }
+    HealthResults:
+      description: |
+        The result of an individual health check.
+      type: object
+      properties:
+        checker:
+          description: Name of checker (name of function registered as a check).
+          type: string
+          example: is_up
+        output:
+          description: Verbal description of status.
+          type: string
+          example: UP
+        passed:
+          description: Boolean value to tell if check passed.
+          type: boolean
+          example: true
+        timestamp:
+          description: A timestamp.
+          type: string
+        expires:
+          description: |
+            A timestamp to tell when the check will expire.
+            This can be used to cache results.
+          type: string
+      required:
+        - check
+        - passed
+      example: |
+        {
+          "checker": "check_is_up",
+          "output": "UP",
+          "passed": true,
+          "timestamp": 1598022539.1783178,
+          "expires": 1598022566.1783178
+        }
+    EnvironmentResponse:
+      description: |
+        A description of the system.
+      type: object
+      properties:
+        os:
+          description: Details about OS.
+          type: object
+        python:
+          description: Details about the current Python executable.
+          type: object
+        process:
+          description: Details about the current process.
+          type: object
+      example:
+        {
+          "os": {
+            "platform": "linux",
+          },
+          "python": {
+            "version": "3.6.9 (default, Jun  9 2020, 15:31:15) \n[GCC 7.5.0]",
+            "executable": "/usr/bin/python3",
+            "pythonpath": [
+              "/usr/lib/python3",
+            ],
+            "version_info": {
+              "major": 3,
+              "minor": 6,
+              "micro": 9,
+              "releaselevel": "final",
+              "serial": 0
+            }
+          },
+          "process": {
+            "argv": [
+              "/home/scripts/run-server.py"
+            ],
+            "cwd": "/home/scripts",
+            "user": "scripts",
+            "pid": 24650,
+            "environ": {
+              "TERM": "tmux-256color",
+              "SHELL": "/bin/bash",
+            }
+          },
+        }
+# vim: set shiftwidth=2:softtabstop=2:tabstop=2:expandtab:autoindent :
