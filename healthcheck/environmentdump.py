@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Some docs
+"""
 # -*- coding: utf-8 -*-
 import json
 import os
@@ -16,6 +19,14 @@ class EnvironmentDump(object):
                  include_python=True,
                  include_process=True,
                  **kwargs):
+        """
+        Class to view information about your application's environment
+
+        :param include_os: Include information about your operating system
+        :param include_python: Include information about your Python executable, Python path, and installed packages.
+        :param include_process: Include information about the currently running Python process, including the PID,
+                                command line arguments, and all environment variables.
+        """
         self.functions = {}
         if include_os:
             self.functions['os'] = self.get_os
@@ -28,6 +39,12 @@ class EnvironmentDump(object):
         [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
 
     def add_section(self, name, func):
+        """ Add custom section
+
+        :param name: Name of section
+        :param func: Value to of section, it can be dynamic value like a function
+        :return: None
+        """
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         if not hasattr(func, '__call__'):

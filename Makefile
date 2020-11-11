@@ -17,7 +17,7 @@ endif
 
 .PHONY: clean
 clean:
-	rm -rf .cache .tox/ .coverage build/ dist/ docs/_build htmlcov *.egg-info
+	rm -rf .cache .tox/ .coverage build/ dist/ build docs/_build htmlcov *.egg-info
 	find . -name \*.pyc -delete -print
 	find . -name __pycache__ -delete -print
 
@@ -72,3 +72,24 @@ patch:
 ifndef VERBOSE
 .SILENT:
 endif
+
+# Minimal makefile for Sphinx documentation
+#
+
+# You can set these variables from the command line, and also
+# from the environment for the first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = source
+BUILDDIR      = build
+
+# Put it first so that "make" without argument is like "make help".
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: help Makefile
+
+# Catch-all target: route all unknown targets to Sphinx using the new
+# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+%: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
