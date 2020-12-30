@@ -68,8 +68,8 @@ Here's an example of basic usage with ``Flask``:
     envdump.add_section("application", application_data)
 
     # Add a flask route to expose information
-    app.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
-    app.add_url_rule("/environment", "environment", view_func=lambda: envdump.run())
+    app.add_url_rule("/healthcheck", "healthcheck", view_func=health.run)
+    app.add_url_rule("/environment", "environment", view_func=envdump.run)
 
 To use with ``Tornado`` you can import the ``TornadoHandler``:
 
