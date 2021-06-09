@@ -8,10 +8,13 @@ from healthcheck import HealthCheck
 
 class HealthCheckSingleRunTest(unittest.TestCase):
 
+    def setUp(self):
+        HealthCheck.unregister_all()
+
     @staticmethod
     def check_that_works():
         """Check that always return true."""
-        return True, "it works"
+        return True, 'it works'
 
     @staticmethod
     def check_throws_exception():
@@ -25,8 +28,8 @@ class HealthCheckSingleRunTest(unittest.TestCase):
         self.assertEqual(200, status)
 
         jr = json.loads(message)
-        self.assertEqual("success", jr["status"])
-        self.assertEqual(len(jr["results"]), 1)
+        self.assertEqual('success', jr['status'])
+        self.assertEqual(len(jr['results']), 1)
 
 
 if __name__ == '__main__':

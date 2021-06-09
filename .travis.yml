@@ -6,28 +6,28 @@ matrix:
         - TOXENV=py27
     - python: 2.7
       env:
-        - TOXENV=flask
+        - TOXENV=py27-flask
     - python: 2.7
       env:
-        - TOXENV=tornado
+        - TOXENV=py27-tornado
     - python: 3.5
       env:
         - TOXENV=py3
     - python: 3.5
       env:
-        - TOXENV=flask
+        - TOXENV=py3-flask
     - python: 3.5
       env:
-        - TOXENV=tornado
+        - TOXENV=py3-tornado
     - python: 3.6
       env:
         - TOXENV=py3
     - python: 3.6
       env:
-        - TOXENV=flask
+        - TOXENV=py3-flask
     - python: 3.6
       env:
-        - TOXENV=tornado
+        - TOXENV=py3-tornado
     - python: 3.7 # https://docs.travis-ci.com/user/languages/python/#running-python-tests-on-multiple-operating-systems
       dist: xenial # required for Python >= 3.7
       env:
@@ -36,11 +36,11 @@ matrix:
     - python: 3.7
       dist: xenial
       env:
-        - TOXENV=flask
+        - TOXENV=py3-flask
     - python: 3.7
       dist: xenial
       env:
-        - TOXENV=tornado
+        - TOXENV=py3-tornado
 before_install:
   - pip install --upgrade pip
 install:

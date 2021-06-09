@@ -206,6 +206,25 @@ Note, all checkers will get run and all failures will be reported. It's
 intended that they are all separate checks and if any one fails the
 healthcheck overall is failed.
 
+
+Using decorator
+~~~~~~~
+
+.. code:: python
+    from healthcheck import checker
+
+    @checker(name='addition-works')
+    def addition_works():
+        if 1 + 1 == 2:
+            return True, "addition works"
+        else:
+            return False, "the universe is broken"
+
+    @checker
+    def throws_exception():
+        bad_var = None
+        bad_var['explode']
+
 Caching
 ~~~~~~~
 
@@ -258,7 +277,7 @@ like this:
 
 .. code:: python
 
-    envdump = EnvironmentDump(include_python=False, 
+    envdump = EnvironmentDump(include_python=False,
                               include_os=False,
                               include_process=False)
 
@@ -282,6 +301,5 @@ your own. Here's an example of how this would be used:
 Credits
 -------
 
-This project was forked from `Runscope/healthcheck 
+This project was forked from `Runscope/healthcheck
 <https://github.com/Runscope/healthcheck>`_. since ``1.3.1``
-
