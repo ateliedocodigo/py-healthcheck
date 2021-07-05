@@ -135,7 +135,10 @@ class HealthCheck(object):
         # Reduce to 6 decimal points to have consistency with timestamp
         elapsed_time = float('{:.6f}'.format(elapsed_time))
 
-        if not passed:
+        if passed:
+            msg = 'Health check "{}" passed'.format(checker.__name__)
+            logger.debug(msg)
+        else:
             msg = 'Health check "{}" failed with output "{}"'.format(checker.__name__, output)
             logger.error(msg)
 
