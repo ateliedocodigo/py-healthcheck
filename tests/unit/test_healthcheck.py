@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+import logging
 import unittest
 
 from healthcheck import HealthCheck
@@ -31,7 +32,9 @@ class BasicHealthCheckTest(unittest.TestCase):
 
     def test_success_check(self):
         hc = HealthCheck(checkers=[self.check_that_works])
-        message, status, headers = hc.run()
+        with self.assertLogs('healthcheck', level='DEBUG') as cm:
+            message, status, headers = hc.run()
+        self.assertEqual(cm.output, ['DEBUG:healthcheck.healthcheck:Health check "check_that_works" passed'])
         self.assertEqual(200, status)
         jr = json.loads(message)
         self.assertEqual("success", jr["status"])
