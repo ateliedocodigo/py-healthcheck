@@ -39,7 +39,7 @@ def json_failed_handler(results, *args, **kw):
         'timestamp': time.time(),
         'results': results,
     }
-    [data.update({k: v}) for k, v in kw.items()]
+    data.update(kw)
     return json.dumps(data)
 
 
