@@ -1,6 +1,6 @@
 name: "Unittests"
 
-on: [push]
+on: [push, pull_request]
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
