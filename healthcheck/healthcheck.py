@@ -111,12 +111,11 @@ class HealthCheck(object):
                 message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
-        else:
-            message = "NOT OK"
-            if self.failed_handler:
-                message = self.failed_handler(results, **custom_section)
+        message = "NOT OK"
+        if self.failed_handler:
+            message = self.failed_handler(results, **custom_section)
 
-            return message, self.failed_status, self.failed_headers
+        return message, self.failed_status, self.failed_headers
 
     def run_check(self, checker):
         start_time = time.time()
