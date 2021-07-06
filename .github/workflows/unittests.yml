@@ -2,12 +2,13 @@ name: "Unittests"
 
 on: [push]
 jobs:
-  pytest:
+  tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version: [3.9]
         os: [ubuntu-latest]
+        framework: [flask, tornado]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -18,9 +19,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install tox
-      - name: Run the Flask Unit Tests via Tox
+      - name: Run the ${{framework}} Unit Tests via Tox
         run: |
-          tox -e flask
-      - name: Run the Tornado Unit Tests via Tox
-        run: |
-          tox -e tornado
+          tox -e ${{framework}}
