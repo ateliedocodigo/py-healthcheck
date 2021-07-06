@@ -17,8 +17,8 @@ except Exception:
     pass
 
 
-def basic_exception_handler(_, e):
-    return False, str(e)
+def basic_exception_handler(_, exc):
+    return False, str(exc)
 
 
 def json_success_handler(results, *args, **kw):
