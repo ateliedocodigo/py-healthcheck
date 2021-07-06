@@ -58,7 +58,7 @@ class EnvironmentDump:
                                    'serial': sys.version_info.serial}}
         try:
             import pip
-            packages = dict([(p.project_name, p.version) for p in pip.get_installed_distributions()])
+            packages = {p.project_name: p.version for p in pip.get_installed_distributions()}
             result['packages'] = packages
         except Exception:
             pass
