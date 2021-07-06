@@ -3,9 +3,9 @@
 import json
 import logging
 import socket
+import time
 
 import six
-import time
 
 from .timeout import timeout
 
