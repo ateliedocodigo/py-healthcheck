@@ -126,9 +126,9 @@ class HealthCheck(object):
                 passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
             else:
                 passed, output = checker()
-        except Exception as e:
-            logger.exception(e)
-            passed, output = self.exception_handler(checker, e)
+        except Exception as exc:
+            logger.exception(exc)
+            passed, output = self.exception_handler(checker, exc)
 
         end_time = time.time()
         elapsed_time = end_time - start_time
