@@ -10,7 +10,7 @@ import six
 from .security import safe_dict
 
 
-class EnvironmentDump(object):
+class EnvironmentDump:
     def __init__(self,
                  include_os=True,
                  include_python=True,
