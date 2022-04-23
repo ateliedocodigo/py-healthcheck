@@ -5,10 +5,10 @@ import tornado.web
 
 class TornadoHandler(tornado.web.RequestHandler):
 
-    def initialize(self, checker):
+    def initialize(self, checker) -> None:
         self.checker = checker
 
-    def get(self, *args, **kwargs):
+    def get(self, *args, **kwargs) -> None:
         message, status_code, headers = self.checker.run(*args, **kwargs)
         self.set_status(status_code)
         [self.set_header(k, v) for k, v in headers.items()]

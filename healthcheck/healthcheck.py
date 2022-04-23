@@ -3,9 +3,10 @@
 import json
 import logging
 import socket
+import time
+from typing import Tuple, Dict, Union
 
 import six
-import time
 
 from .timeout import timeout
 
@@ -17,11 +18,11 @@ except Exception:
     pass
 
 
-def basic_exception_handler(_, e):
+def basic_exception_handler(_, e) -> Tuple[bool, str]:
     return False, str(e)
 
 
-def json_success_handler(results, *args, **kw):
+def json_success_handler(results, *args, **kw) -> str:
     data = {
         'hostname': socket.gethostname(),
         'status': 'success',
@@ -32,7 +33,7 @@ def json_success_handler(results, *args, **kw):
     return json.dumps(data)
 
 
-def json_failed_handler(results, *args, **kw):
+def json_failed_handler(results, *args, **kw) -> str:
     data = {
         'hostname': socket.gethostname(),
         'status': 'failure',
@@ -43,7 +44,7 @@ def json_failed_handler(results, *args, **kw):
     return json.dumps(data)
 
 
-def check_reduce(passed, result):
+def check_reduce(passed, result) -> bool:
     return passed and result.get('passed')
 
 
@@ -77,15 +78,15 @@ class HealthCheck(object):
         # ads custom_sections on signature
         [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
 
-    def add_section(self, name, func):
+    def add_section(self, name, func) -> None:
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         self.functions[name] = func
 
-    def add_check(self, func):
+    def add_check(self, func) -> None:
         self.checkers.append(func)
 
-    def run(self, check=None):
+    def run(self, check=None) -> Tuple[str, int, Dict[str, str]]:
         results = []
         filtered = [c for c in self.checkers if check is None or c.__name__ == check]
         for checker in filtered:
@@ -118,7 +119,7 @@ class HealthCheck(object):
 
             return message, self.failed_status, self.failed_headers
 
-    def run_check(self, checker):
+    def run_check(self, checker) -> Dict[str, Union[str, float, bool]]:
         start_time = time.time()
 
         try:

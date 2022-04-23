@@ -1,10 +1,12 @@
+from typing import Any, Dict
+
 try:
     from collections.abc import Mapping  # only works on python 3.3+
 except ImportError:
     from collections import Mapping
 
 
-def safe_dict(dictionary, blacklist=('key', 'token', 'pass'), max_deep=5):
+def safe_dict(dictionary, blacklist=('key', 'token', 'pass'), max_deep=5) -> Dict[Any, Any]:
     """ Avoid listing passwords and access tokens or keys in the dictionary
 
     :param dictionary: Input dictionary
