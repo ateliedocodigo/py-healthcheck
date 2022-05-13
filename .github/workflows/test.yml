@@ -1,0 +1,46 @@
+name: Run the test suite
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+
+jobs:
+  test-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.5", "3.6", "3.7"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the project and its dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Test with pytest
+        run: py.test --cov=. --cov-report xml --doctest-modules --cov-report term
+
+  test-others:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+        python-version: ["3.5", "3.6", "3.7"]
+        exclude:
+          - os: windows-latest
+            python-version: "3.10"  # won't compile psycopg2
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the project and its dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Test with pytest
+        run: py.test --cov=. --cov-report xml --doctest-modules --cov-report term
