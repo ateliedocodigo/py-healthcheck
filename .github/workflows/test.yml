@@ -43,10 +43,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install the project and its dependencies
-        run: pip install -r requirements-dev.txt
-      - name: Test with pytest
-        run: pytest --cov=. --cov-report xml --doctest-modules --cov-report term
+        run: pip install tox
+      - name: Unit test
+        run: tox
       - name: Test flask application
-        run: python -m unittest discover -v -p '*flask*' tests
+        run: tox -e flaks
       - name: Test Tornado application
-        run: python -m unittest discover -v -p '*tornado*' tests
+        run: tox -e tornado
