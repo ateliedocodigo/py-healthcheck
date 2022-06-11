@@ -19,7 +19,7 @@ def safe_dict(dictionary, blacklist=('key', 'token', 'pass'), max_deep=5):
         if isinstance(dictionary[key], Mapping):
             result[key] = safe_dict(dictionary[key], blacklist, max_deep - 1)
         elif any([b in key.lower() for b in blacklist]):
-            result[key] = "********"
+            result[key] = '********'
         else:
             result[key] = dictionary[key]
     return result

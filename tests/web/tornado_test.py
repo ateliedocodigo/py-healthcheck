@@ -27,7 +27,7 @@ class BasicHealthCheckTest(AsyncHTTPTestCase):
 
         handler_args = dict(checker=self.hc)
         self._app.add_handlers(
-            r".*",
+            r'.*',
             [
                 (
                     self.path,
@@ -43,14 +43,14 @@ class BasicHealthCheckTest(AsyncHTTPTestCase):
 
     def test_failing_check(self):
         def fail_check():
-            return False, "FAIL"
+            return False, 'FAIL'
 
         self.hc.add_check(fail_check)
         response = self.fetch(self.path)
         self.assertEqual(response.code, 500)
 
         jr = json.loads(response.body.decode('ascii'))
-        self.assertEqual("failure", jr["status"])
+        self.assertEqual('failure', jr['status'])
 
 
 class BasicEnvironmentDumpTest(AsyncHTTPTestCase):
@@ -70,7 +70,7 @@ class BasicEnvironmentDumpTest(AsyncHTTPTestCase):
 
         handler_args = dict(checker=self.hc)
         self._app.add_handlers(
-            r".*",
+            r'.*',
             [
                 (
                     self.path,
@@ -81,15 +81,15 @@ class BasicEnvironmentDumpTest(AsyncHTTPTestCase):
 
     def test_basic_check(self):
         def test_ok():
-            return "OK"
+            return 'OK'
 
-        self.hc.add_section("test_func", test_ok)
+        self.hc.add_section('test_func', test_ok)
         self._set_handler()
 
         response = self.fetch(self.path)
         self.assertEqual(response.code, 200)
         jr = json.loads(response.body.decode('ascii'))
-        self.assertEqual("OK", jr["test_func"])
+        self.assertEqual('OK', jr['test_func'])
 
 
 if __name__ == '__main__':

@@ -106,13 +106,13 @@ class HealthCheck(object):
         passed = reduce(check_reduce, results, True)
 
         if passed:
-            message = "OK"
+            message = 'OK'
             if self.success_handler:
                 message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
         else:
-            message = "NOT OK"
+            message = 'NOT OK'
             if self.failed_handler:
                 message = self.failed_handler(results, **custom_section)
 
@@ -123,7 +123,7 @@ class HealthCheck(object):
 
         try:
             if self.error_timeout > 0:
-                passed, output = timeout(self.error_timeout, "Timeout error!")(checker)()
+                passed, output = timeout(self.error_timeout, 'Timeout error!')(checker)()
             else:
                 passed, output = checker()
         except Exception as e:
