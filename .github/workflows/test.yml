@@ -19,14 +19,9 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install the project and its dependencies
         run: pip install tox
-      - name: Unit test
+      - name: Run test with tox
         run: tox
-      - name: Test flask application
-        run: tox -e flask
-      - name: Test Tornado application
-        run: tox -e tornado
 
   test-on-mac-and-windows:
     strategy:
@@ -44,11 +39,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install the project and its dependencies
+      - name: Install tox
         run: pip install tox
-      - name: Unit test
+      - name: Run test with tox
         run: tox
-      - name: Test flask application
-        run: tox -e flask
-      - name: Test Tornado application
-        run: tox -e tornado
