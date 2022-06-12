@@ -113,7 +113,7 @@ class HealthCheck:
                 message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
-        message = "NOT OK"
+        message = 'NOT OK'
         if self.failed_handler:
             message = self.failed_handler(results, **custom_section)
         return message, self.failed_status, self.failed_headers
