@@ -70,7 +70,7 @@ class EnvironmentDump:
     def get_login(self):
         # Based on https://github.com/gitpython-developers/GitPython/pull/43/
         # Fix for 'Inappopropirate ioctl for device' on posix systems.
-        if os.name == "posix":
+        if os.name == 'posix':
             import pwd
             username = pwd.getpwuid(os.geteuid()).pw_name
         else:

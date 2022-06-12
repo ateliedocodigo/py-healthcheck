@@ -1,0 +1,56 @@
+name: Run the test suite
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-for-python3:
+    strategy:
+      #fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+        exclude:
+          - os: windows-latest
+            python-version: "3.10"  # won't compile psycopg2
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install tox
+        run: pip install tox
+      - name: Run unit tests with tox
+        run: tox -e py3
+      - name: Run flask test with tox
+        run: tox -e flask
+      - name: Run tornado test with tox
+        run: tox -e tornado
+
+  test-for-python2:
+    strategy:
+      #fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["2.7"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install tox
+        run: pip install tox
+      - name: Run unit tests with tox
+        run: tox -e py2
+      - name: Run flask test with tox
+        run: tox -e flask
+      - name: Run tornado test with tox
+        run: tox -e tornado
