@@ -147,6 +147,5 @@ class TimeoutHealthCheckTest(unittest.TestCase):
         self.assertEqual(actual_dict['results'], input_data)
 
 
-
 if __name__ == '__main__':
     unittest.main()
