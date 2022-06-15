@@ -127,7 +127,7 @@ class HealthCheck:
             else:
                 passed, output = checker()
         except Exception as exc:
-            logger.exception(exc)
+            logger.error(exc)
             passed, output = self.exception_handler(checker, exc)
 
         end_time = time.time()
