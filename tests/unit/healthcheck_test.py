@@ -136,15 +136,15 @@ class TimeoutHealthCheckTest(unittest.TestCase):
 
     def test_json_success_handler(self):
         input_data = {
-            "foo": "bar",
-            "asd": "yxc"
+            'foo': 'bar',
+            'asd': 'yxc'
         }
         actual_string = json_success_handler(input_data)
         actual_dict = json.loads(actual_string)
-        self.assertIn("status", actual_dict)
-        self.assertIn("status", actual_dict)
-        self.assertIn("timestamp", actual_dict)
-        self.assertEqual(actual_dict["results"], input_data)
+        self.assertIn('status', actual_dict)
+        self.assertIn('status', actual_dict)
+        self.assertIn('timestamp', actual_dict)
+        self.assertEqual(actual_dict['results'], input_data)
 
 
 
