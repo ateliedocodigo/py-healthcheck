@@ -4,6 +4,7 @@ import unittest
 from sys import version_info
 
 from healthcheck import HealthCheck
+from healthcheck.healthcheck import json_success_handler
 
 
 class BasicHealthCheckTest(unittest.TestCase):
@@ -132,6 +133,19 @@ class TimeoutHealthCheckTest(unittest.TestCase):
         self.assertEqual(500, status)
         jr = json.loads(message)
         self.assertEqual('failure', jr['status'])
+
+    def test_json_success_handler(self):
+        input_data = {
+            "foo": "bar",
+            "asd": "yxc"
+        }
+        actual_string = json_success_handler(input_data)
+        actual_dict = json.loads(actual_string)
+        self.assertIn("status", actual_dict)
+        self.assertIn("status", actual_dict)
+        self.assertIn("timestamp", actual_dict)
+        self.assertEqual(actual_dict["results"], input_data)
+
 
 
 if __name__ == '__main__':
