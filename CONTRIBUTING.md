@@ -29,7 +29,7 @@ $ git commit -m "commit message"
 
 6.1. Update `CHANGELOG.md`
 
-Example: 
+Example:
 ```
 ### Next Release
 

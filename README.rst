@@ -258,7 +258,7 @@ like this:
 
 .. code:: python
 
-    envdump = EnvironmentDump(include_python=False, 
+    envdump = EnvironmentDump(include_python=False,
                               include_os=False,
                               include_process=False)
 
@@ -282,6 +282,5 @@ your own. Here's an example of how this would be used:
 Credits
 -------
 
-This project was forked from `Runscope/healthcheck 
+This project was forked from `Runscope/healthcheck
 <https://github.com/Runscope/healthcheck>`_. since ``1.3.1``
-

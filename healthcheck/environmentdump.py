@@ -11,7 +11,7 @@ import six
 from .security import safe_dict
 
 
-class EnvironmentDump(object):
+class EnvironmentDump:
     def __init__(self,
                  include_os=True,
                  include_python=True,
@@ -26,7 +26,9 @@ class EnvironmentDump(object):
             self.functions['process'] = self.get_process
 
         # ads custom_sections on signature
-        [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
+        for k, v in kwargs.items():
+            if k not in self.functions:
+                self.add_section(k, v)
 
     def add_section(self, name, func) -> None:
         if name in self.functions:
@@ -59,7 +61,7 @@ class EnvironmentDump(object):
                                    'serial': sys.version_info.serial}}
         try:
             import pip
-            packages = dict([(p.project_name, p.version) for p in pip.get_installed_distributions()])
+            packages = {p.project_name: p.version for p in pip.get_installed_distributions()}
             result['packages'] = packages
         except Exception:
             pass
@@ -69,7 +71,7 @@ class EnvironmentDump(object):
     def get_login(self) -> str:
         # Based on https://github.com/gitpython-developers/GitPython/pull/43/
         # Fix for 'Inappopropirate ioctl for device' on posix systems.
-        if os.name == "posix":
+        if os.name == 'posix':
             import pwd
             username = pwd.getpwuid(os.geteuid()).pw_name
         else:

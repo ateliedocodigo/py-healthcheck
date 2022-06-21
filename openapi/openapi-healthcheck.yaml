@@ -111,7 +111,7 @@ components:
         - results
       example:
         {
-          "hostname": "d122bb054e3d",
+          "hostname": "localhost",
           "status": "success",
           "timestamp": 1598022539.1783307,
           "results": [
