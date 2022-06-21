@@ -4,7 +4,11 @@ import json
 import os
 import platform
 import sys
-
+try:
+    from typing import Dict, Any, Tuple, Callable
+except ImportError:
+    # for python2
+    pass
 import six
 
 from .security import safe_dict
@@ -29,7 +33,7 @@ class EnvironmentDump:
             if k not in self.functions:
                 self.add_section(k, v)
 
-    def add_section(self, name, func):
+    def add_section(self, name, func):  # type: (Any, Callable) -> None
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         if not hasattr(func, '__call__'):
@@ -37,19 +41,19 @@ class EnvironmentDump:
             return
         self.functions[name] = func
 
-    def run(self):
+    def run(self):  # type: () -> Tuple[str, int, Dict[str, str]]
         data = {}
         for (name, func) in six.iteritems(self.functions):
             data[name] = func()
 
         return json.dumps(data, default=str), 200, {'Content-Type': 'application/json'}
 
-    def get_os(self):
+    def get_os(self):  # type: () -> Dict[str, Any]
         return {'platform': sys.platform,
                 'name': os.name,
                 'uname': platform.uname()}
 
-    def get_python(self):
+    def get_python(self):  # type: () -> Dict[str, Any]
         result = {'version': sys.version,
                   'executable': sys.executable,
                   'pythonpath': sys.path,
@@ -60,26 +64,27 @@ class EnvironmentDump:
                                    'serial': sys.version_info.serial}}
         try:
             import pip
-            packages = {p.project_name: p.version for p in pip.get_installed_distributions()}
+            packages = {p.project_name: p.version
+                        for p in pip.get_installed_distributions()}  # type:ignore[attr-defined]
             result['packages'] = packages
-        except Exception:
+        except AttributeError:
             pass
 
         return result
 
-    def get_login(self):
+    def get_login(self):  # type: () -> str
         # Based on https://github.com/gitpython-developers/GitPython/pull/43/
         # Fix for 'Inappopropirate ioctl for device' on posix systems.
         if os.name == 'posix':
             import pwd
-            username = pwd.getpwuid(os.geteuid()).pw_name
+            username = pwd.getpwuid(os.geteuid()).pw_name  # type:ignore[attr-defined]
         else:
             username = os.environ.get('USER', os.environ.get('USERNAME', 'UNKNOWN'))
             if username == 'UNKNOWN' and hasattr(os, 'getlogin'):
                 username = os.getlogin()
         return username
 
-    def get_process(self):
+    def get_process(self):  # type:() -> Dict[str, Any]
         return {'argv': sys.argv,
                 'cwd': os.getcwd(),
                 'user': self.get_login(),
