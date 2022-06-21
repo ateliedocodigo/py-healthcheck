@@ -1,5 +1,8 @@
-from typing import Any, Tuple
-
+try:
+    from typing import Any, Tuple
+except ImportError:
+    # for python2
+    pass
 try:
     from collections.abc import Mapping  # only works on python 3.3+
 except ImportError:

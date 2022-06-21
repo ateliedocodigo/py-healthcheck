@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import Any
+try:
+    from typing import Any
+except ImportError:
+    # for python2
+    pass
 
 import tornado.web
 

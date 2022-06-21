@@ -4,8 +4,11 @@ import json
 import logging
 import socket
 import time
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
-
+try:
+    from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
+except ImportError:
+    # for python2
+    pass
 
 import six
 

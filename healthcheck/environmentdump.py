@@ -4,8 +4,11 @@ import json
 import os
 import platform
 import sys
-from typing import Dict, Any, Tuple, Callable
-
+try:
+    from typing import Dict, Any, Tuple, Callable
+except ImportError:
+    # for python2
+    pass
 import six
 
 from .security import safe_dict
