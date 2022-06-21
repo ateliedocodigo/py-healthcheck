@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from ddt import data, ddt, unpack # type:ignore[import]
+from ddt import data, ddt, unpack  # type:ignore[import]
 
 from healthcheck.security import safe_dict
 
