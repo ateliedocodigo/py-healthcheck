@@ -9,7 +9,7 @@ from healthcheck import EnvironmentDump
 try:
     from collections.abc import Mapping  # only works on python 3.3+
 except ImportError:
-    from collections import Mapping
+    from collections import Mapping  # type: ignore[attr-defined, no-redef]
 
 
 class BasicEnvironmentDumpTest(unittest.TestCase):
