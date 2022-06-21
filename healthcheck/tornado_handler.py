@@ -8,7 +8,7 @@ except ImportError:
 
 import tornado.web
 
-from healthcheck import HealthCheck
+from .healthcheck import HealthCheck
 
 
 class TornadoHandler(tornado.web.RequestHandler):
