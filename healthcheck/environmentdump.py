@@ -4,7 +4,7 @@ import json
 import os
 import platform
 import sys
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Callable
 
 import six
 
@@ -30,7 +30,7 @@ class EnvironmentDump:
             if k not in self.functions:
                 self.add_section(k, v)
 
-    def add_section(self, name, func):  # type: () -> None
+    def add_section(self, name, func):  # type: (Any, Callable) -> None
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         if not hasattr(func, '__call__'):
@@ -61,19 +61,20 @@ class EnvironmentDump:
                                    'serial': sys.version_info.serial}}
         try:
             import pip
-            packages = {p.project_name: p.version for p in pip.get_installed_distributions()}
+            packages = {p.project_name: p.version
+                        for p in pip.get_installed_distributions()}  # type:ignore[attr-defined]
             result['packages'] = packages
-        except Exception:
+        except AttributeError:
             pass
 
         return result
 
-    def get_login(self):  # type: ()-> str
+    def get_login(self):  # type: () -> str
         # Based on https://github.com/gitpython-developers/GitPython/pull/43/
         # Fix for 'Inappopropirate ioctl for device' on posix systems.
         if os.name == 'posix':
             import pwd
-            username = pwd.getpwuid(os.geteuid()).pw_name
+            username = pwd.getpwuid(os.geteuid()).pw_name  # type:ignore[attr-defined]
         else:
             username = os.environ.get('USER', os.environ.get('USERNAME', 'UNKNOWN'))
             if username == 'UNKNOWN' and hasattr(os, 'getlogin'):
