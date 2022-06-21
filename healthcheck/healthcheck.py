@@ -18,8 +18,9 @@ try:
 except Exception:
     pass
 
+
 def basic_exception_handler(_, exc) -> Tuple[bool, str]:
-    return False, str(ecx)
+    return False, str(exc)
 
 
 def json_success_handler(results, *args, **kw) -> str:
