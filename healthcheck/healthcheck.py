@@ -3,9 +3,9 @@
 import json
 import logging
 import socket
+import time
 
 import six
-import time
 
 from .timeout import timeout
 
@@ -17,8 +17,8 @@ except Exception:
     pass
 
 
-def basic_exception_handler(_, e):
-    return False, str(e)
+def basic_exception_handler(_, exc):
+    return False, str(exc)
 
 
 def json_success_handler(results, *args, **kw):
@@ -28,7 +28,7 @@ def json_success_handler(results, *args, **kw):
         'timestamp': time.time(),
         'results': results,
     }
-    [data.update({k: v}) for k, v in kw.items()]
+    data.update(kw)
     return json.dumps(data)
 
 
@@ -39,7 +39,7 @@ def json_failed_handler(results, *args, **kw):
         'timestamp': time.time(),
         'results': results,
     }
-    [data.update({k: v}) for k, v in kw.items()]
+    data.update(kw)
     return json.dumps(data)
 
 
@@ -47,7 +47,7 @@ def check_reduce(passed, result):
     return passed and result.get('passed')
 
 
-class HealthCheck(object):
+class HealthCheck:
     def __init__(self, success_status=200,
                  success_headers=None, success_handler=json_success_handler,
                  success_ttl=27, failed_status=500, failed_headers=None,
@@ -75,7 +75,9 @@ class HealthCheck(object):
 
         self.functions = dict()
         # ads custom_sections on signature
-        [self.add_section(k, v) for k, v in kwargs.items() if k not in self.functions]
+        for k, v in kwargs.items():
+            if k not in self.functions:
+                self.add_section(k, v)
 
     def add_section(self, name, func):
         if name in self.functions:
@@ -111,12 +113,10 @@ class HealthCheck(object):
                 message = self.success_handler(results, **custom_section)
 
             return message, self.success_status, self.success_headers
-        else:
-            message = 'NOT OK'
-            if self.failed_handler:
-                message = self.failed_handler(results, **custom_section)
-
-            return message, self.failed_status, self.failed_headers
+        message = 'NOT OK'
+        if self.failed_handler:
+            message = self.failed_handler(results, **custom_section)
+        return message, self.failed_status, self.failed_headers
 
     def run_check(self, checker):
         start_time = time.time()
@@ -126,9 +126,9 @@ class HealthCheck(object):
                 passed, output = timeout(self.error_timeout, 'Timeout error!')(checker)()
             else:
                 passed, output = checker()
-        except Exception as e:
-            logger.exception(e)
-            passed, output = self.exception_handler(checker, e)
+        except Exception as exc:
+            logger.error(exc)
+            passed, output = self.exception_handler(checker, exc)
 
         end_time = time.time()
         elapsed_time = end_time - start_time

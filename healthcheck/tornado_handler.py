@@ -11,5 +11,6 @@ class TornadoHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
         message, status_code, headers = self.checker.run(*args, **kwargs)
         self.set_status(status_code)
-        [self.set_header(k, v) for k, v in headers.items()]
+        for k, v in headers.items():
+            self.set_header(k, v)
         self.write(message)
