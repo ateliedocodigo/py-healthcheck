@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Tuple
 
 try:
     from collections.abc import Mapping  # only works on python 3.3+
@@ -6,7 +6,8 @@ except ImportError:
     from collections import Mapping
 
 
-def safe_dict(dictionary, blacklist=('key', 'token', 'pass'), max_deep=5) -> Dict[Any, Any]:
+def safe_dict(dictionary, blacklist=('key', 'token', 'pass'), max_deep=5):
+    # type: (Mapping[str,Any], Tuple[str,...], int)  -> Mapping[Any, Any]
     """ Avoid listing passwords and access tokens or keys in the dictionary
 
     :param dictionary: Input dictionary

@@ -30,7 +30,7 @@ class EnvironmentDump:
             if k not in self.functions:
                 self.add_section(k, v)
 
-    def add_section(self, name, func) -> None:
+    def add_section(self, name, func):  # type: () -> None
         if name in self.functions:
             raise Exception('The name "{}" is already taken.'.format(name))
         if not hasattr(func, '__call__'):
@@ -38,19 +38,19 @@ class EnvironmentDump:
             return
         self.functions[name] = func
 
-    def run(self) -> Tuple[str, int, Dict[str, str]]:
+    def run(self):  # type: () -> Tuple[str, int, Dict[str, str]]
         data = {}
         for (name, func) in six.iteritems(self.functions):
             data[name] = func()
 
         return json.dumps(data, default=str), 200, {'Content-Type': 'application/json'}
 
-    def get_os(self) -> Dict[str, Any]:
+    def get_os(self):  # type: () -> Dict[str, Any]
         return {'platform': sys.platform,
                 'name': os.name,
                 'uname': platform.uname()}
 
-    def get_python(self) -> Dict[str, Any]:
+    def get_python(self):  # type: () -> Dict[str, Any]
         result = {'version': sys.version,
                   'executable': sys.executable,
                   'pythonpath': sys.path,
@@ -68,7 +68,7 @@ class EnvironmentDump:
 
         return result
 
-    def get_login(self) -> str:
+    def get_login(self):  # type: ()-> str
         # Based on https://github.com/gitpython-developers/GitPython/pull/43/
         # Fix for 'Inappopropirate ioctl for device' on posix systems.
         if os.name == 'posix':
@@ -80,7 +80,7 @@ class EnvironmentDump:
                 username = os.getlogin()
         return username
 
-    def get_process(self) -> Dict[str, Any]:
+    def get_process(self):  # type:() -> Dict[str, Any]
         return {'argv': sys.argv,
                 'cwd': os.getcwd(),
                 'user': self.get_login(),
